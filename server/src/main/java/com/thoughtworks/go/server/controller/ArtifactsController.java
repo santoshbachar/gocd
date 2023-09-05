@@ -56,6 +56,7 @@ import java.util.Map;
 import static com.thoughtworks.go.util.ArtifactLogUtil.isConsoleOutput;
 import static com.thoughtworks.go.util.GoConstants.*;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 @Controller
 public class ArtifactsController {
@@ -94,7 +95,9 @@ public class ArtifactsController {
                                              @RequestParam("filePath") String filePath,
                                              @RequestParam(value = "sha1", required = false) String sha
     ) throws Exception {
-        return getArtifact(filePath, (identifier, artifactFolder) -> FileModelAndView.fileNotFound(filePath), pipelineName, pipelineCounter, stageName, stageCounter, buildName, sha);
+        String filePathSanitized = escapeHtml4(filePath);
+        String shaSanitized = escapeHtml4(sha);
+        return getArtifact(filePathSanitized, (identifier, artifactFolder) -> FileModelAndView.fileNotFound(filePathSanitized), pipelineName, pipelineCounter, stageName, stageCounter, buildName, shaSanitized);
     }
 
     @RequestMapping(value = "/repository/restful/artifact/GET/json", method = RequestMethod.GET)
