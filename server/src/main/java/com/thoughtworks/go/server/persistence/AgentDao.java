@@ -224,7 +224,7 @@ public class AgentDao extends HibernateDaoSupport {
     public void updateAgentIdFromDBIfAgentDoesNotHaveAnIdAndAgentExistInDB(Agent agent) {
         Long idFromDB = (Long) getHibernateTemplate().execute(session -> {
             Query query = session.createQuery("select id from Agent where uuid = :uuid");
-            query.setString("uuid", agent.getUuid());
+            query.setString("uuid", String.valueOf(agent.getUuid()));
             return query.uniqueResult();
         });
 
