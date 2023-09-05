@@ -33,6 +33,7 @@ import com.thoughtworks.go.server.web.*;
 import com.thoughtworks.go.util.ArtifactLogUtil;
 import com.thoughtworks.go.util.SystemEnvironment;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,9 +151,10 @@ public class ArtifactsController {
         int convertedAttempt = attempt == null ? 1 : attempt;
 
         try {
-            File artifact = artifactsService.findArtifact(jobIdentifier, filePath);
+            String filePathSanitized = StringEscapeUtils.escapeHtml4(filePath);
+            File artifact = artifactsService.findArtifact(jobIdentifier, filePathSanitized);
             if (artifact.exists() && artifact.isFile()) {
-                return FileModelAndView.fileAlreadyExists(filePath);
+                return FileModelAndView.fileAlreadyExists(filePathSanitized);
             }
 
             MultipartFile multipartFile = multipartFile(request);
