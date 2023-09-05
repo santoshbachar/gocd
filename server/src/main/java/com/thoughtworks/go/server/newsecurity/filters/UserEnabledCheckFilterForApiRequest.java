@@ -19,6 +19,7 @@ import com.thoughtworks.go.server.newsecurity.handlers.renderer.ContentTypeNegot
 import com.thoughtworks.go.server.newsecurity.models.ContentTypeAwareResponse;
 import com.thoughtworks.go.server.service.SecurityService;
 import com.thoughtworks.go.server.service.UserService;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +43,7 @@ public class UserEnabledCheckFilterForApiRequest extends AbstractUserEnabledChec
         final ContentTypeAwareResponse contentTypeAwareResponse = CONTENT_TYPE_NEGOTIATION_MESSAGE_HANDLER.getResponse(request);
         response.setCharacterEncoding("utf-8");
         response.setContentType(contentTypeAwareResponse.getContentType().toString());
-        response.getOutputStream().print(contentTypeAwareResponse.getFormattedMessage(errorMessage));
+        String formattedMessageSanitized = StringEscapeUtils.escapeHtml4(contentTypeAwareResponse.getFormattedMessage(errorMessage));
+        response.getOutputStream().print(formattedMessageSanitized);
     }
 }
