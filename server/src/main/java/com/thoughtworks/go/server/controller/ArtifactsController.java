@@ -149,9 +149,9 @@ public class ArtifactsController {
         }
 
         int convertedAttempt = attempt == null ? 1 : attempt;
+        String filePathSanitized = StringEscapeUtils.escapeHtml4(filePath);
 
         try {
-            String filePathSanitized = StringEscapeUtils.escapeHtml4(filePath);
             File artifact = artifactsService.findArtifact(jobIdentifier, filePathSanitized);
             if (artifact.exists() && artifact.isFile()) {
                 return FileModelAndView.fileAlreadyExists(filePathSanitized);
@@ -165,19 +165,19 @@ public class ArtifactsController {
             boolean success = saveFile(convertedAttempt, artifact, multipartFile, shouldUnzipStream(multipartFile));
 
             if (!success) {
-                return FileModelAndView.errorSavingFile(filePath);
+                return FileModelAndView.errorSavingFile(filePathSanitized);
             }
 
-            success = updateChecksumFile(request, jobIdentifier, filePath);
+            success = updateChecksumFile(request, jobIdentifier, filePathSanitized);
 
             if (!success) {
-                return FileModelAndView.errorSavingChecksumFile(filePath);
+                return FileModelAndView.errorSavingChecksumFile(filePathSanitized);
             }
 
-            return FileModelAndView.fileCreated(filePath);
+            return FileModelAndView.fileCreated(filePathSanitized);
 
         } catch (IllegalArtifactLocationException e) {
-            return FileModelAndView.forbiddenUrl(filePath);
+            return FileModelAndView.forbiddenUrl(filePathSanitized);
         }
     }
 
