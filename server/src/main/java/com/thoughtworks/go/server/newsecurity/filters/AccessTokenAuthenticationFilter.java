@@ -27,6 +27,7 @@ import com.thoughtworks.go.server.newsecurity.utils.SessionUtils;
 import com.thoughtworks.go.server.service.AccessTokenService;
 import com.thoughtworks.go.server.service.SecurityAuthConfigService;
 import com.thoughtworks.go.server.service.SecurityService;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,6 +179,7 @@ public class AccessTokenAuthenticationFilter extends OncePerRequestFilter {
         ContentTypeAwareResponse contentTypeAwareResponse = new ContentTypeNegotiationMessageRenderer().getResponse(request);
         response.setCharacterEncoding("utf-8");
         response.setContentType(contentTypeAwareResponse.getContentType().toString());
-        response.getOutputStream().print(contentTypeAwareResponse.getFormattedMessage(errorMessage));
+        String formattedMessageSanitized = StringEscapeUtils.escapeHtml4(contentTypeAwareResponse.getFormattedMessage(errorMessage));
+        response.getOutputStream().print(formattedMessageSanitized);
     }
 }
