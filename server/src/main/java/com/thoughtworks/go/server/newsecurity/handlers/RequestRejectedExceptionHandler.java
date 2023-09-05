@@ -17,6 +17,7 @@ package com.thoughtworks.go.server.newsecurity.handlers;
 
 import com.thoughtworks.go.server.newsecurity.handlers.renderer.ContentTypeNegotiationMessageRenderer;
 import com.thoughtworks.go.server.newsecurity.models.ContentTypeAwareResponse;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
@@ -39,7 +40,8 @@ public class RequestRejectedExceptionHandler {
             final ContentTypeAwareResponse contentTypeAwareResponse = CONTENT_TYPE_NEGOTIATION_MESSAGE_HANDLER.getResponse(request);
             response.setCharacterEncoding("utf-8");
             response.setContentType(contentTypeAwareResponse.getContentType().toString());
-            response.getOutputStream().print(contentTypeAwareResponse.getFormattedMessage(message));
+            String formattedMessageSanitized = StringEscapeUtils.escapeHtml4(contentTypeAwareResponse.getFormattedMessage(message));
+            response.getOutputStream().print(formattedMessageSanitized);
         } else {
             response.sendError(httpStatus.value(), message);
         }
