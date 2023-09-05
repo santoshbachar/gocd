@@ -15,6 +15,7 @@
  */
 package com.thoughtworks.go.server.web;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -66,8 +67,8 @@ public class HttpTestUtil {
             writer.write(":");
             writer.write(String.valueOf(req.getLocalPort()));
             writer.write(req.getContextPath());
-            writer.write(req.getPathInfo());
-            String query = req.getQueryString();
+            writer.write(StringEscapeUtils.escapeHtml4(req.getPathInfo()));
+            String query = StringEscapeUtils.escapeHtml4(req.getQueryString());
             if (query != null) {
                 writer.write("?" + query);
             }

@@ -18,6 +18,7 @@ package com.thoughtworks.go.server.websocket;
 import com.thoughtworks.go.server.domain.Username;
 import com.thoughtworks.go.server.newsecurity.utils.SessionUtils;
 import com.thoughtworks.go.server.service.SecurityService;
+import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -72,6 +73,6 @@ public class ConsoleLogSocketServlet extends WebSocketServlet {
     }
 
     private String pipeline(HttpServletRequest request) {
-        return request.getPathInfo().split("/")[1];
+        return StringEscapeUtils.escapeHtml4(request.getPathInfo().split("/")[1]);
     }
 }

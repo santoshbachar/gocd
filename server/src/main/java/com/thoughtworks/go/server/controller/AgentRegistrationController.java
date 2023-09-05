@@ -24,6 +24,7 @@ import com.thoughtworks.go.util.SystemEnvironment;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,7 +233,7 @@ public class AgentRegistrationController {
                             , agentAutoRegisterKey, elasticAgentId, elasticPluginId);
                     LOG.error("Rejecting request for registration. Error: HttpCode=[{}] Message=[{}] UUID=[{}] Hostname=[{}]" +
                             "ElasticAgentID=[{}] PluginID=[{}]", UNPROCESSABLE_ENTITY, message, uuid, hostname, elasticAgentId, elasticPluginId);
-                    return new ResponseEntity<>(message, UNPROCESSABLE_ENTITY);
+                    return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(message), UNPROCESSABLE_ENTITY);
                 }
             }
 
@@ -328,7 +329,7 @@ public class AgentRegistrationController {
             token = encodeBase64String(hmac().doFinal(uuid.getBytes()));
         }
 
-        return new ResponseEntity<>(token, OK);
+        return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(token), OK);
     }
 
     private Agent createAgentFromRequest(String uuid, String hostname, String ip, String elasticAgentId, String elasticPluginId) {
