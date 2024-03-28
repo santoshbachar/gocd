@@ -31,9 +31,9 @@ import com.thoughtworks.go.server.view.artifacts.ArtifactsView;
 import com.thoughtworks.go.server.view.artifacts.LocalArtifactsView;
 import com.thoughtworks.go.server.web.*;
 import com.thoughtworks.go.util.ArtifactLogUtil;
+import com.thoughtworks.go.util.FileUtil;
 import com.thoughtworks.go.util.SystemEnvironment;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,7 +161,7 @@ public class ArtifactsController {
         }
 
         int convertedAttempt = attempt == null ? 1 : attempt;
-        String filePathSanitized = StringEscapeUtils.escapeHtml4(filePath);
+        String filePathSanitized = FileUtil.getPathTraversalSafeFilePath(filePath);
 
         try {
             File artifact = artifactsService.findArtifact(jobIdentifier, filePathSanitized);

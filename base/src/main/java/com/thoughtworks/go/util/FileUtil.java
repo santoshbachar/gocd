@@ -17,6 +17,7 @@ package com.thoughtworks.go.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +157,20 @@ public class FileUtil {
             return FilenameUtils.separatorsToUnix(defaultWorkingDir.getPath());
         }
         return applyBaseDirIfRelativeAndNormalize(defaultWorkingDir, new File(actualFileToUse));
+    }
+
+    public static String getPathTraversalSafeFilePath(String filePath) {
+        final String htmlSafeFilePath = StringEscapeUtils.escapeHtml4(filePath);
+        String sanitizedPath = htmlSafeFilePath.replaceAll("\\.{2,}", "");
+
+        final String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.equals("windows")) {
+            sanitizedPath = new File(".").getAbsolutePath() + File.separator + sanitizedPath;
+        } else if (osName.contains("linux") || osName.contains("mac")) {
+            sanitizedPath = new File(sanitizedPath).toURI().normalize().getPath().replace("..", "");
+        }
+
+        return sanitizedPath;
     }
 }
 
