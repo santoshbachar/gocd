@@ -34,6 +34,7 @@ import com.thoughtworks.go.util.ArtifactLogUtil;
 import com.thoughtworks.go.util.FileUtil;
 import com.thoughtworks.go.util.SystemEnvironment;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,7 +210,8 @@ public class ArtifactsController {
 
     private boolean saveFile(int convertedAttempt, File artifact, MultipartFile multipartFile, boolean shouldUnzip) throws IOException {
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            return artifactsService.saveFile(artifact, inputStream, shouldUnzip, convertedAttempt);
+            File safeArtifact = new File(FileUtil.getPathTraversalSafeFilePath(artifact.getPath()));
+            return artifactsService.saveFile(safeArtifact, inputStream, shouldUnzip, convertedAttempt);
         }
     }
 
@@ -301,13 +303,15 @@ public class ArtifactsController {
         }
 
         if (filePath.contains("..")) {
-            return FileModelAndView.forbiddenUrl(filePath);
+            return FileModelAndView.forbiddenUrl(StringEscapeUtils.escapeHtml4(filePath));
         }
 
         view = new LocalArtifactsView(folderViewFactory, artifactsService, translatedId, consoleService);
 
-        ModelAndView createdView = view.createView(filePath, sha);
-        LOGGER.info("[Artifact Download] Successfully resolved '{}' for '{}/{}/{}/{}/{}'. It took: {}ms", filePath, pipelineName, counterOrLabel, stageName, stageCounter, buildName, System.currentTimeMillis() - before);
+        final String sanitizedFilePath = FileUtil.getPathTraversalSafeFilePath(filePath);
+
+        ModelAndView createdView = view.createView(sanitizedFilePath, sha);
+        LOGGER.info("[Artifact Download] Successfully resolved '{}' for '{}/{}/{}/{}/{}'. It took: {}ms", sanitizedFilePath, pipelineName, counterOrLabel, stageName, stageCounter, buildName, System.currentTimeMillis() - before);
         return createdView;
     }
 
@@ -340,19 +344,21 @@ public class ArtifactsController {
 
     private ModelAndView putArtifact(JobIdentifier jobIdentifier, String filePath,
                                      InputStream inputStream) throws Exception {
-        File artifact = artifactsService.findArtifact(jobIdentifier, filePath);
+        final String sanitizedFilePath = FileUtil.getPathTraversalSafeFilePath(filePath);
+
+        File artifact = artifactsService.findArtifact(jobIdentifier, sanitizedFilePath);
         if (artifactsService.saveOrAppendFile(artifact, inputStream)) {
-            return FileModelAndView.fileAppended(filePath);
+            return FileModelAndView.fileAppended(sanitizedFilePath);
         } else {
-            return FileModelAndView.errorSavingFile(filePath);
+            return FileModelAndView.errorSavingFile(sanitizedFilePath);
         }
     }
 
     private ModelAndView buildNotFound(String pipelineName, String counterOrLabel, String stageName,
                                        String stageCounter,
                                        String buildName) {
-        return ResponseCodeView.create(SC_NOT_FOUND, String.format("Job %s/%s/%s/%s/%s not found.", pipelineName,
-            counterOrLabel, stageName, stageCounter, buildName));
+        return ResponseCodeView.create(SC_NOT_FOUND, String.format("Job %s/%s/%s/%s/%s not found.", StringEscapeUtils.escapeHtml4(pipelineName),
+            StringEscapeUtils.escapeHtml4(counterOrLabel), StringEscapeUtils.escapeHtml4(stageName), StringEscapeUtils.escapeHtml4(stageCounter), StringEscapeUtils.escapeHtml4(buildName)));
     }
 
     private ModelAndView logsNotFound(JobIdentifier identifier) {
