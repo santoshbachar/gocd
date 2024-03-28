@@ -5,7 +5,7 @@
     <ul class="entity_title">
         <li class="name">
           <span class="label">Pipeline</span>
-          <%=link_to params[:pipeline_name], url_for_pipeline(params[:pipeline_name]) %></li>
+          <%=link_to h(params[:pipeline_name]), url_for_pipeline(h(params[:pipeline_name])) %></li>
         <li class="last">
           <span class="label">Instance</span>
           <h1><%= @pipeline!=nil ? @pipeline.getLabel() : params[:pipeline_counter] %> </h1>
