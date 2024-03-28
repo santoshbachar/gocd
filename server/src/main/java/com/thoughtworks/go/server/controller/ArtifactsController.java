@@ -96,9 +96,18 @@ public class ArtifactsController {
                                              @RequestParam("filePath") String filePath,
                                              @RequestParam(value = "sha1", required = false) String sha
     ) throws Exception {
-        String filePathSanitized = escapeHtml4(filePath);
-        String shaSanitized = escapeHtml4(sha);
-        return getArtifact(filePathSanitized, (identifier, artifactFolder) -> FileModelAndView.fileNotFound(filePathSanitized), pipelineName, pipelineCounter, stageName, stageCounter, buildName, shaSanitized);
+        final String filePathSanitized = escapeHtml4(filePath);
+        final String shaSanitized = escapeHtml4(sha);
+
+        return callGetArtifact(filePathSanitized, pipelineName, pipelineCounter, stageName, stageCounter, buildName, shaSanitized);
+    }
+
+    public ModelAndView callGetArtifact(String filePath, String pipelineName, String counterOrLabel, String stageName, String stageCounter, String buildName, String sha) throws Exception {
+        return getArtifact(filePath, (identifier, artifactFolder) -> FileModelAndView.fileNotFound(filePath), pipelineName, counterOrLabel, stageName, stageCounter, buildName, sha);
+    }
+
+    public ModelAndView callGetArtifactForZip(String filePath, ArtifactFolderViewFactory artifactFolderViewFactory, String pipelineName, String counterOrLabel, String stageName, String stageCounter, String buildName, String sha) throws Exception {
+        return getArtifact(filePath, artifactFolderViewFactory, pipelineName, counterOrLabel, stageName, stageCounter, buildName, sha);
     }
 
     @RequestMapping(value = "/repository/restful/artifact/GET/json", method = RequestMethod.GET)
@@ -110,7 +119,10 @@ public class ArtifactsController {
                                           @RequestParam("filePath") String filePath,
                                           @RequestParam(value = "sha1", required = false) String sha
     ) throws Exception {
-        return getArtifact(filePath, new JsonArtifactFolderViewFactory(), pipelineName, pipelineCounter, stageName, stageCounter, buildName, sha);
+        final String filePathSanitized = escapeHtml4(filePath);
+        final String shaSanitized = escapeHtml4(sha);
+
+        return callGetArtifact(filePathSanitized, pipelineName, pipelineCounter, stageName, stageCounter, buildName, shaSanitized);
     }
 
     @RequestMapping(value = "/repository/restful/artifact/GET/zip", method = RequestMethod.GET)
@@ -122,7 +134,7 @@ public class ArtifactsController {
                                          @RequestParam("filePath") String filePath,
                                          @RequestParam(value = "sha1", required = false) String sha
     ) throws Exception {
-        return getArtifact(filePath.equals(".zip") ? "./.zip" : filePath, zipFolderViewFactory, pipelineName, pipelineCounter, stageName, stageCounter, buildName, sha);
+        return callGetArtifactForZip(filePath.equals(".zip") ? "./.zip" : filePath, zipFolderViewFactory, pipelineName, pipelineCounter, stageName, stageCounter, buildName, sha);
     }
 
     @RequestMapping(value = "/repository/restful/artifact/POST/*", method = RequestMethod.POST)
@@ -212,8 +224,9 @@ public class ArtifactsController {
                                     @RequestParam(value = "agentId", required = false) String agentId,
                                     HttpServletRequest request
     ) throws Exception {
-        if (filePath.contains("..")) {
-            return FileModelAndView.forbiddenUrl(filePath);
+        final String sanitizedFilePath = escapeHtml4(filePath);
+        if (sanitizedFilePath.contains("..")) {
+            return FileModelAndView.forbiddenUrl(sanitizedFilePath);
         }
 
         if (!isValidStageCounter(stageCounter)) {
@@ -227,10 +240,10 @@ public class ArtifactsController {
             return buildNotFound(pipelineName, pipelineCounter, stageName, stageCounter, buildName);
         }
 
-        if (isConsoleOutput(filePath)) {
+        if (isConsoleOutput(sanitizedFilePath)) {
             return putConsoleOutput(jobIdentifier, request.getInputStream());
         } else {
-            return putArtifact(jobIdentifier, filePath, request.getInputStream());
+            return putArtifact(jobIdentifier, sanitizedFilePath, request.getInputStream());
         }
     }
 
@@ -339,7 +352,7 @@ public class ArtifactsController {
                                        String stageCounter,
                                        String buildName) {
         return ResponseCodeView.create(SC_NOT_FOUND, String.format("Job %s/%s/%s/%s/%s not found.", pipelineName,
-                counterOrLabel, stageName, stageCounter, buildName));
+            counterOrLabel, stageName, stageCounter, buildName));
     }
 
     private ModelAndView logsNotFound(JobIdentifier identifier) {

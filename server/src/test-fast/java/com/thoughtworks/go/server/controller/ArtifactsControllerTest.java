@@ -24,9 +24,11 @@ import com.thoughtworks.go.server.service.ConsoleService;
 import com.thoughtworks.go.server.service.RestfulService;
 import com.thoughtworks.go.server.web.ArtifactFolderViewFactory;
 import com.thoughtworks.go.server.web.ResponseCodeView;
+import com.thoughtworks.go.util.ArtifactLogUtil;
 import com.thoughtworks.go.util.SystemEnvironment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.*;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
@@ -42,6 +44,8 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
@@ -83,6 +87,45 @@ public class ArtifactsControllerTest {
         when(consoleService.updateConsoleLog(eq(artifactFile), any(InputStream.class))).thenReturn(true);
         assertThat(((ResponseCodeView) artifactsController.putArtifact("pipeline", "10", "stage", "2", "build", 103l, path, "agent-id", request).getView()).getStatusCode(), is(HttpServletResponse.SC_OK));
         verify(consoleActivityMonitor).consoleUpdatedFor(jobIdentifier);
+    }
+
+    @Test
+    public void testXSSAttack_shouldReturnInternalServerErrorAndNotLogConsoleOutput_whenPassedAScriptTagXSSInPath() throws Exception {
+        String content = "Testing:";
+        request.setContent(content.getBytes());
+        JobIdentifier jobIdentifier = new JobIdentifier("pipeline", 10, "label-10", "stage", "2", "build", 103l);
+        when(restfulService.findJob("pipeline", "10", "stage", "2", "build", 103l)).thenReturn(jobIdentifier);
+        String path = "<script>alert('XSS Attack!')</script>";
+        File artifactFile = new File("junk");
+        when(consoleService.consoleLogFile(jobIdentifier)).thenReturn(artifactFile);
+        when(consoleService.updateConsoleLog(eq(artifactFile), any(InputStream.class))).thenReturn(true);
+
+        assertThat(((ResponseCodeView) artifactsController.putArtifact("pipeline", "10", "stage", "2", "build", 103l, path, "agent-id", request).getView()).getStatusCode(), is(SC_INTERNAL_SERVER_ERROR));
+        verify(consoleActivityMonitor, never()).consoleUpdatedFor(jobIdentifier);
+
+//         TODO: Need to find a way to test that the sanitized input is passed to isConsoleOutput
+//        verify(artifactLogUtil).isConsoleOutput(path);
+//        try (MockedStatic<ArtifactLogUtil> mockedStatic = Mockito.mockStatic(ArtifactLogUtil.class)) {
+//
+//            mockedStatic.verify(() -> ArtifactLogUtil.isConsoleOutput(path));
+//        }
+    }
+
+    @Test
+    public void testXSSAttack_shouldReturnInternalServerErrorAndNotLogConsoleOutput_whenPassedAnEventAttributeXSSInPath() throws Exception {
+        String content = "Testing:";
+        request.setContent(content.getBytes());
+        JobIdentifier jobIdentifier = new JobIdentifier("pipeline", 10, "label-10", "stage", "2", "build", 103l);
+        when(restfulService.findJob("pipeline", "10", "stage", "2", "build", 103l)).thenReturn(jobIdentifier);
+        String path = "image.jpg onmouseover=\"alert('XSS Attack!')\"";
+        File artifactFile = new File("junk");
+        when(consoleService.consoleLogFile(jobIdentifier)).thenReturn(artifactFile);
+        when(consoleService.updateConsoleLog(eq(artifactFile), any(InputStream.class))).thenReturn(true);
+        assertThat(((ResponseCodeView) artifactsController.putArtifact("pipeline", "10", "stage", "2", "build", 103l, path, "agent-id", request).getView()).getStatusCode(), is(SC_INTERNAL_SERVER_ERROR));
+        verify(consoleActivityMonitor, never()).consoleUpdatedFor(jobIdentifier);
+
+//         TODO: Refer to testXSSAttack_shouldReturnInternalServerErrorAndNotLogConsoleOutput_whenPassedAScriptTagXSSInPath()
+//        verify(artifactLogUtil).isConsoleOutput(path);
     }
 
     @Test
@@ -144,7 +187,7 @@ public class ArtifactsControllerTest {
 
     @Test
     void shouldFailToGetArtifactWhenStageCounterIsNotAPositiveInteger() throws Exception {
-        ModelAndView modelAndView = artifactsController.getArtifactAsJson("pipeline-1", "1", "stage-1",  "NOT_AN_INTEGER", "job-1", "some-path", "sha1");
+        ModelAndView modelAndView = artifactsController.getArtifactAsJson("pipeline-1", "1", "stage-1", "NOT_AN_INTEGER", "job-1", "some-path", "sha1");
         assertThat(((ResponseCodeView) modelAndView.getView()).getStatusCode(), is(SC_NOT_FOUND));
     }
 
@@ -163,6 +206,91 @@ public class ArtifactsControllerTest {
         assertThat(controller.getArtifactAsZip("pipeline", "counter", "stage", "2", "job", "file_name", "sha1"), sameInstance(returnVal));
         assertThat(controller.getArtifactAsJson("pipeline", "counter", "stage", "2", "job", "file_name", "sha1"), sameInstance(returnVal));
     }
+
+    @Test
+    public void shouldPreventScriptTag_XSSAttack() throws Exception {
+        final ModelAndView returnVal = new ModelAndView();
+        ArtifactsController controller = Mockito.spy(new ArtifactsController(artifactService, restfulService, mock(ZipArtifactCache.class), jobInstanceDao, consoleActivityMonitor, consoleService, systemEnvironment) {
+            @Override
+            ModelAndView getArtifact(String filePath, ArtifactFolderViewFactory folderViewFactory, String pipelineName, String counterOrLabel, String stageName, String stageCounter, String buildName, String sha) throws Exception {
+                return returnVal;
+            }
+        });
+
+        String pipelineName = "pipeline";
+        String pipelineCounter = "counter";
+        String stageName = "stage";
+        String stageCounter = "2";
+        String buildName = "job";
+        String scriptTagInFilePath = "<script>alert('XSS Attack!')</script>";
+        String expectedSanitizedPath = "&lt;script&gt;alert('XSS Attack!')&lt;/script&gt;";
+        String sha = "sha1";
+
+        ArgumentCaptor<String> filePathCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> pipelineNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> counterOrLabelCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> stageNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> stageCounterCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> buildNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> shaCaptor = ArgumentCaptor.forClass(String.class);
+
+
+        controller.getArtifactNonFolder(pipelineName, pipelineCounter, stageName, stageCounter, buildName, scriptTagInFilePath, sha);
+
+        verify(controller).getArtifactNonFolder(pipelineName, pipelineCounter, stageName, stageCounter, buildName, scriptTagInFilePath, sha);
+
+        verify(controller).callGetArtifact(filePathCaptor.capture(), pipelineNameCaptor.capture(),
+            counterOrLabelCaptor.capture(), stageNameCaptor.capture(), stageCounterCaptor.capture(), buildNameCaptor.capture(), shaCaptor.capture());
+
+        String capturedFilePathValue = filePathCaptor.getValue();
+        assertNotNull(capturedFilePathValue);
+        assertEquals(expectedSanitizedPath, capturedFilePathValue);
+
+        // TODO: How do we test the rest without duplicating the same code block in a new function?
+        // Same with the shouldPreventEventAttribute_XSSAttack
+        controller.getArtifactAsJson(pipelineName, pipelineCounter, stageName, stageCounter, buildName, scriptTagInFilePath, sha);
+        verify(controller).getArtifactAsJson(pipelineName, pipelineCounter, stageName, stageCounter, buildName, scriptTagInFilePath, sha);
+    }
+
+    @Test
+    public void shouldPreventEventAttribute_XSSAttack() throws Exception {
+        final ModelAndView returnVal = new ModelAndView();
+        ArtifactsController controller = Mockito.spy(new ArtifactsController(artifactService, restfulService, mock(ZipArtifactCache.class), jobInstanceDao, consoleActivityMonitor, consoleService, systemEnvironment) {
+            @Override
+            ModelAndView getArtifact(String filePath, ArtifactFolderViewFactory folderViewFactory, String pipelineName, String counterOrLabel, String stageName, String stageCounter, String buildName, String sha) throws Exception {
+                return returnVal;
+            }
+        });
+
+        String pipelineName = "pipeline";
+        String pipelineCounter = "counter";
+        String stageName = "stage";
+        String stageCounter = "2";
+        String buildName = "job";
+        String eventAttributeInFilePath = "image.jpg onmouseover=\"alert('XSS Attack!')\"";
+        String expectedSanitizedPath = "image.jpg onmouseover=&quot;alert('XSS Attack!')&quot;";
+        String sha = "sha1";
+
+        ArgumentCaptor<String> filePathCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> pipelineNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> counterOrLabelCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> stageNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> stageCounterCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> buildNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> shaCaptor = ArgumentCaptor.forClass(String.class);
+
+        controller.getArtifactNonFolder(pipelineName, pipelineCounter, stageName, stageCounter, buildName, eventAttributeInFilePath, sha);
+
+        verify(controller).getArtifactNonFolder(pipelineName, pipelineCounter, stageName, stageCounter, buildName, eventAttributeInFilePath, sha);
+
+        verify(controller).callGetArtifact(filePathCaptor.capture(), pipelineNameCaptor.capture(),
+            counterOrLabelCaptor.capture(), stageNameCaptor.capture(), stageCounterCaptor.capture(), buildNameCaptor.capture(), shaCaptor.capture());
+
+        String capturedFilePathValue = filePathCaptor.getValue();
+        assertNotNull(capturedFilePathValue);
+        assertEquals(expectedSanitizedPath, capturedFilePathValue);
+    }
+
 
     @Test
     public void shouldReturnBadRequestIfRequiredHeadersAreMissingOnACreateArtifactRequest() throws Exception {
