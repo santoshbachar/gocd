@@ -17,7 +17,13 @@ package com.thoughtworks.go.config;
 
 import com.thoughtworks.go.util.SystemEnvironment;
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -32,6 +38,18 @@ public class GoConfigFileReader {
 
     public String configXml() throws IOException {
         return FileUtils.readFileToString(fileLocation(), UTF_8);
+    }
+
+    public String safeConfigXml() throws IOException, ParserConfigurationException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setXIncludeAware(false);
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(new ByteArrayInputStream(configXml().getBytes()));
+
+        return document.toString();
     }
 
     public File fileLocation() {

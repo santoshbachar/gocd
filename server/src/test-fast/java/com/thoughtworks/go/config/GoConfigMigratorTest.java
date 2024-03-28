@@ -57,7 +57,7 @@ public class GoConfigMigratorTest {
     public void shouldUpgradeConfigToLatestVersion() throws Exception {
         String configXml = "cruise_config_xml_contents";
 
-        when(reader.configXml()).thenReturn(configXml);
+        when(reader.safeConfigXml()).thenReturn(configXml);
 
         goConfigMigrator.migrate();
 
@@ -73,7 +73,7 @@ public class GoConfigMigratorTest {
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
         GoConfigHolder goConfigHolder = mock(GoConfigHolder.class);
 
-        when(reader.configXml()).thenReturn(configXml);
+        when(reader.safeConfigXml()).thenReturn(configXml);
         when(goConfigMigration.upgradeIfNecessary(configXml)).thenReturn(configXml);
         when(loader.deserializeConfig(configXml)).thenReturn(cruiseConfig);
         when(fullConfigSaveNormalFlow.execute(commandArgumentCaptor.capture(), listArgumentCaptor.capture(), stringArgumentCaptor.capture())).thenReturn(goConfigHolder);
@@ -96,7 +96,7 @@ public class GoConfigMigratorTest {
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
 
         when(systemEnvironment.getCruiseConfigFile()).thenReturn("");
-        when(reader.configXml()).thenReturn(configInFile).thenReturn(versionedConfig);
+        when(reader.safeConfigXml()).thenReturn(configInFile).thenReturn(versionedConfig);
         when(configRepository.getCurrentRevision()).thenReturn(mock(GoConfigRevision.class));
         when(goConfigMigration.upgradeIfNecessary(configInFile)).thenThrow(new RuntimeException());
         when(goConfigMigration.upgradeIfNecessary(versionedConfig)).thenReturn(versionedConfig);

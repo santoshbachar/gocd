@@ -101,7 +101,7 @@ public class GoConfigMigrator {
     }
 
     private GoConfigHolder upgradeConfigFile() throws Exception {
-        String upgradedXml = this.goConfigMigration.upgradeIfNecessary(this.goConfigFileReader.configXml());
+        String upgradedXml = this.goConfigMigration.upgradeIfNecessary(this.goConfigFileReader.safeConfigXml());
 
         LOGGER.info("[Config Save] Starting Config Save post upgrade using FullConfigSaveNormalFlow");
 
