@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
-public class DirHandlerTest {
+class DirHandlerTest {
     private Path artifactDest;
     private File agentDest;
     private ArtifactMd5Checksums checksums;
@@ -42,17 +42,17 @@ public class DirHandlerTest {
     private DirHandler dirHandler;
 
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws Exception {
+    void setUp(@TempDir Path tempDir) throws Exception {
         artifactDest = TempDirUtils.createTempDirectoryIn(tempDir, "fetch_dest");
         checksums = mock(ArtifactMd5Checksums.class);
         goPublisher = new StubGoPublisher();
         zip = tempDir.resolve("zip_location").toFile();
         agentDest = tempDir.resolve("agent_fetch_dest").toFile();
-        dirHandler = new DirHandler("fetch_dest",agentDest);
+        dirHandler = new DirHandler("fetch_dest", agentDest);
     }
 
     @Test
-    public void shouldComputeMd5ForEveryFileInADirectory() throws IOException {
+    void shouldComputeMd5ForEveryFileInADirectory() throws IOException {
         zip = createZip("under_dir");
         dirHandler.useArtifactMd5Checksums(checksums);
 
@@ -68,7 +68,7 @@ public class DirHandlerTest {
     }
 
     @Test
-    public void shouldSuccessfullyProceedIfNoMd5IsPresentForTheFileUnderInspection() throws IOException {
+    void shouldSuccessfullyProceedIfNoMd5IsPresentForTheFileUnderInspection() throws IOException {
         when(checksums.md5For("fetch_dest/first")).thenReturn(null);
         zip = createZip("under_dir");
         dirHandler.useArtifactMd5Checksums(checksums);
@@ -86,7 +86,7 @@ public class DirHandlerTest {
 
 
     @Test
-    public void shouldProceedSuccessfullyWhenNoChecksumFileIsPresent() throws IOException {
+    void shouldProceedSuccessfullyWhenNoChecksumFileIsPresent() throws IOException {
         zip = createZip("under_dir");
         dirHandler.useArtifactMd5Checksums(null);
 
@@ -99,7 +99,7 @@ public class DirHandlerTest {
     }
 
     @Test
-    public void shouldProceedSuccessfullyWhenNoChecksumFileIsPresentJustForASingleFile() throws IOException {
+    void shouldProceedSuccessfullyWhenNoChecksumFileIsPresentJustForASingleFile() throws IOException {
         zip = createZip("under_dir");
 
         dirHandler.useArtifactMd5Checksums(checksums);
@@ -108,16 +108,16 @@ public class DirHandlerTest {
         dirHandler.handleResult(200, goPublisher);
 
         assertThat(goPublisher.getMessage()).contains(
-                String.format("[WARN] The md5checksum value of the artifact [%s] was not found on the server. Hence, Go could not verify the integrity of its contents.",
-                        "fetch_dest/under_dir/second"));
+            String.format("[WARN] The md5checksum value of the artifact [%s] was not found on the server. Hence, Go could not verify the integrity of its contents.",
+                "fetch_dest/under_dir/second"));
         assertThat(goPublisher.getMessage()).contains(
-                String.format("[WARN] The md5checksum value of the artifact [%s] was not found on the server. Hence, Go could not verify the integrity of its contents.", "fetch_dest/first"));
+            String.format("[WARN] The md5checksum value of the artifact [%s] was not found on the server. Hence, Go could not verify the integrity of its contents.", "fetch_dest/first"));
         assertThat(goPublisher.getMessage()).contains(String.format("Saved artifact to [%s] without verifying the integrity of its contents.", agentDest));
         assertArtifactWasSaved("under_dir");
     }
 
     @Test
-    public void shouldThrowExceptionWhenChecksumsDoNotMatch() throws IOException {
+    void shouldThrowExceptionWhenChecksumsDoNotMatch() throws IOException {
         when(checksums.md5For("fetch_dest/first")).thenReturn("foo");
         dirHandler.useArtifactMd5Checksums(checksums);
         zip = createZip("under_dir");
@@ -134,7 +134,7 @@ public class DirHandlerTest {
     }
 
     @Test
-    public void shouldUseCompletePathToLookUpMd5Checksum() throws IOException {
+    void shouldUseCompletePathToLookUpMd5Checksum() throws IOException {
         DirHandler handler = new DirHandler("server/fetch_dest", agentDest);
         zip = createZip("under_dir");
         handler.useArtifactMd5Checksums(checksums);
@@ -152,7 +152,7 @@ public class DirHandlerTest {
     }
 
     @Test
-    public void shouldUseCorrectPathOnServerToLookUpMd5Checksum() throws IOException {
+    void shouldUseCorrectPathOnServerToLookUpMd5Checksum() throws IOException {
         DirHandler handler = new DirHandler("fetch_dest", agentDest);
         zip = createZip("fetch_dest");
         handler.useArtifactMd5Checksums(checksums);

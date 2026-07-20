@@ -22,22 +22,21 @@ import java.net.UnknownHostException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SystemUtilTest {
+class SystemUtilTest {
     @Test
-    public void shouldReturnFalseIfAddressIsNotLocalFilteredByHostname() {
+    void shouldReturnFalseIfAddressIsNotLocalFilteredByHostname() {
         assertThat(SystemUtil.isLocalhost("google.com", "127.0.0.1"))
             .describedAs("Localhost (google.com with ip 127.0.0.1) should not be a local address.")
             .isFalse();
     }
 
     @Test
-    public void shouldDetermineIfAddressIsLocal() throws UnknownHostException {
+    void shouldDetermineIfAddressIsLocal() throws UnknownHostException {
         InetAddress local;
 
         try {
             local = InetAddress.getLocalHost();
-        }
-        catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             local = InetAddress.getByName("localhost");
         }
 
@@ -47,7 +46,7 @@ public class SystemUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfAddressIsNotLocal() {
+    void shouldReturnFalseIfAddressIsNotLocal() {
         String hostName = "hostThatNeverExists";
         assertThat(SystemUtil.isLocalhost("8.8.8.8"))
             .describedAs("Localhost (" + hostName + ") should not be a local address.")
@@ -55,7 +54,7 @@ public class SystemUtilTest {
     }
 
     @Test
-    public void shouldReturnFalseIfPortIsNotReachableOnLocalhost() {
+    void shouldReturnFalseIfPortIsNotReachableOnLocalhost() {
         assertThat(SystemUtil.isLocalhostReachable(9876)).isFalse();
     }
 }

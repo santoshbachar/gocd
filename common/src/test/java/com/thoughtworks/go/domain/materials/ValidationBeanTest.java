@@ -20,22 +20,22 @@ import org.junit.jupiter.api.Test;
 import static com.thoughtworks.go.domain.materials.ValidationBean.valid;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ValidationBeanTest {
+class ValidationBeanTest {
 
     @Test
-    public void shouldBeInvalidIfMessageIsEmptyOrNull() {
+    void shouldBeInvalidIfMessageIsEmptyOrNull() {
         assertThat(ValidationBean.notValid("").isValid()).isFalse();
         assertThat(ValidationBean.notValid((String) null).isValid()).isFalse();
         assertThat(ValidationBean.notValid(new Exception()).isValid()).isFalse();
     }
 
     @Test
-    public void shouldBeInvalidIfMessageIsNotEmpty() {
+    void shouldBeInvalidIfMessageIsNotEmpty() {
         assertThat(ValidationBean.notValid("With a message").isValid()).isFalse();
     }
 
     @Test
-    public void shouldHaveBasicErrorIfMessageIsEmpty() {
+    void shouldHaveBasicErrorIfMessageIsEmpty() {
         assertThat(ValidationBean.notValid("").getError()).isEmpty();
         assertThat(ValidationBean.notValid((String) null).isValid()).isFalse();
         assertThat(ValidationBean.notValid(new Exception()).isValid()).isFalse();
@@ -47,20 +47,20 @@ public class ValidationBeanTest {
      * We think it was there for SVNKIT and can now be removed.
      */
     @Test
-    public void shouldStripOutExceptionText() {
+    void shouldStripOutExceptionText() {
         assertThat(ValidationBean.notValid(new Exception("SVNKITException:   The actual message")).getError())
             .isEqualTo("The actual message");
     }
 
     @Test
-    public void shouldSeeOriginalExceptionMessage() {
+    void shouldSeeOriginalExceptionMessage() {
         String message = "A message.";
         assertThat(ValidationBean.notValid(new Exception(message)).getError()).isEqualTo(message);
         assertThat(ValidationBean.notValid(message).getError()).isEqualTo(message);
     }
 
     @Test
-    public void shouldBeValid() {
+    void shouldBeValid() {
         assertThat(valid().isValid()).isTrue();
         assertThat(valid().getError()).isEmpty();
         ValidationBean bean = valid();

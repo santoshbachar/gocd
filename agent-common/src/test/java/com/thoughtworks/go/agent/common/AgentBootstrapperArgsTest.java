@@ -23,10 +23,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AgentBootstrapperArgsTest {
+class AgentBootstrapperArgsTest {
 
     @Test
-    public void shouldSerializeToPropertiesWhenCertFileIsSet() throws Exception {
+    void shouldSerializeToPropertiesWhenCertFileIsSet() throws Exception {
         AgentBootstrapperArgs original = new AgentBootstrapperArgs().setServerUrl(URI.create("https://go.example.com/go").toURL()).setRootCertFile(new File("/path/to/certfile")).setSslVerificationMode(AgentBootstrapperArgs.SslMode.NONE);
         Map<String, String> properties = original.toProperties();
 
@@ -37,7 +37,7 @@ public class AgentBootstrapperArgsTest {
 
 
     @Test
-    public void shouldSerializeToPropertiesWhenInsecureIsSet() throws Exception {
+    void shouldSerializeToPropertiesWhenInsecureIsSet() throws Exception {
         AgentBootstrapperArgs original = new AgentBootstrapperArgs().setServerUrl(URI.create("https://go.example.com/go").toURL()).setRootCertFile(null).setSslVerificationMode(AgentBootstrapperArgs.SslMode.NONE);
         Map<String, String> properties = original.toProperties();
 

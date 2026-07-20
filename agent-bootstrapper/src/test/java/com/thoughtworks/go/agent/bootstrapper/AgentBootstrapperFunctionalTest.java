@@ -46,20 +46,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(FakeGoServerExtension.class)
-public class AgentBootstrapperFunctionalTest {
+class AgentBootstrapperFunctionalTest {
 
     @GoTestResource
     FakeGoServer server;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         new File(".agent-bootstrapper.running").delete();
         TEST_AGENT_LAUNCHER.copyTo(AGENT_LAUNCHER_JAR);
         System.setProperty(AgentBootstrapper.WAIT_TIME_BEFORE_RELAUNCH_IN_MS, "0");
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         Files.deleteIfExists(AGENT_LAUNCHER_JAR.toPath());
         Files.deleteIfExists(AGENT_BINARY_JAR.toPath());
         Files.deleteIfExists(TFS_IMPL_JAR.toPath());
@@ -68,7 +68,7 @@ public class AgentBootstrapperFunctionalTest {
     }
 
     @Test
-    public void shouldCheckout_Bundled_agentLauncher() throws IOException {
+    void shouldCheckout_Bundled_agentLauncher() throws IOException {
         try {
             AGENT_LAUNCHER_JAR.delete();
             new AgentBootstrapper().validate();
@@ -80,7 +80,7 @@ public class AgentBootstrapperFunctionalTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldLoadAndBootstrapJarUsingAgentBootstrapCode_specifiedInAgentManifestFile() throws Exception {
+    void shouldLoadAndBootstrapJarUsingAgentBootstrapCode_specifiedInAgentManifestFile() throws Exception {
         PrintStream err = System.err;
         try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -101,7 +101,7 @@ public class AgentBootstrapperFunctionalTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldDownloadJarIfItDoesNotExist() throws Exception {
+    void shouldDownloadJarIfItDoesNotExist() throws Exception {
         File agentJar = new File("agent.jar");
         agentJar.delete();
         new AgentBootstrapper(true).go(new AgentBootstrapperArgs().setServerUrl(getServerUrl()).setRootCertFile(null).setSslVerificationMode(AgentBootstrapperArgs.SslMode.NONE));
@@ -111,7 +111,7 @@ public class AgentBootstrapperFunctionalTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldDownloadJarIfTheCurrentOneIsWrong() throws Exception {
+    void shouldDownloadJarIfTheCurrentOneIsWrong() throws Exception {
         File agentJar = new File("agent.jar");
         agentJar.delete();
         createRandomFile(agentJar);

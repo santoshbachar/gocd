@@ -40,19 +40,19 @@ class SystemInfoTest {
     SystemProperties props;
 
     @Test
-    public void shouldDisableUdevUsage() {
+    void shouldDisableUdevUsage() {
         SystemInfo.determineOperatingSystemCompleteName();
         assertThat(GlobalConfig.get(OSHI_OS_LINUX_ALLOWUDEV, true)).isFalse();
     }
 
     @Test
-    public void shouldDefaultJnaTmpDirIfUnset() {
+    void shouldDefaultJnaTmpDirIfUnset() {
         SystemInfo.determineOperatingSystemCompleteName();
         assertThat(System.getProperty("jna.tmpdir")).isEqualTo(FileUtil.TMP_PARENT_DIR);
     }
 
     @Test
-    public void shouldPreserveJnaTmpDirIfSet() {
+    void shouldPreserveJnaTmpDirIfSet() {
         String defaultTempDir = System.getProperty("java.io.tmpdir");
         props.set("jna.tmpdir", defaultTempDir);
         SystemInfo.determineOperatingSystemCompleteName();
@@ -61,24 +61,24 @@ class SystemInfoTest {
 
     @Test
     @EnabledOnOs(OS.MAC)
-    public void shouldGetCompleteNameOnMac() {
+    void shouldGetCompleteNameOnMac() {
         assertThat(SystemInfo.getOperatingSystemCompleteName()).matches("macOS [0-9.]+ \\(.*\\)");
     }
 
     @Test
     @EnabledOnOs(OS.WINDOWS)
-    public void shouldGetCompleteNameOnWindows() {
+    void shouldGetCompleteNameOnWindows() {
         assertThat(SystemInfo.getOperatingSystemCompleteName()).matches("Windows( \\w+)? [0-9.]+( \\(.*\\))?");
     }
 
     @Test
     @EnabledOnOs(OS.LINUX)
-    public void shouldGetCompleteNameOnLinux() {
+    void shouldGetCompleteNameOnLinux() {
         assertThat(SystemInfo.getOperatingSystemCompleteName()).matches("[ \\w]+ [0-9.]+( \\w+)?( \\(.*\\))?");
     }
 
     @Test
-    public void shouldFallbackToJvmFamilyOnLibraryError() {
+    void shouldFallbackToJvmFamilyOnLibraryError() {
         try (MockedStatic<SystemInfo> systemInfo = mockStatic(SystemInfo.class, Answers.CALLS_REAL_METHODS)) {
             systemInfo.when(SystemInfo::newSystemInfo).thenThrow(new IllegalArgumentException("Cannot determine OS"));
 

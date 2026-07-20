@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UrlConstructorTest {
+class UrlConstructorTest {
     @Test
-    public void shouldGenerateCorrectUrlForGivenPath() {
+    void shouldGenerateCorrectUrlForGivenPath() {
         UrlConstructor urlConstructor = new UrlConstructor("https://example.com:8443/go/");
         assertThat(urlConstructor.serverUrlFor("")).isEqualTo("https://example.com:8443/go");
         assertThat(urlConstructor.serverUrlFor("foo/bar")).isEqualTo("https://example.com:8443/go/foo/bar");

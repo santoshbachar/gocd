@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PluggableTaskBuilderTest {
+class PluggableTaskBuilderTest {
 
     public static final String TEST_PLUGIN_ID = "test-plugin-id";
     @Mock
@@ -67,7 +67,7 @@ public class PluggableTaskBuilderTest {
     private TaskExtension taskExtension;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         PluginManagerReference.reference().setPluginManager(pluginManager);
         when(pluggableTask.getPluginConfiguration()).thenReturn(new PluginConfiguration(TEST_PLUGIN_ID, "1.0"));
         Map<String, Map<String, String>> pluginConfig = new HashMap<>();
@@ -76,12 +76,12 @@ public class PluggableTaskBuilderTest {
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         JobConsoleLoggerInternal.unsetContext();
     }
 
     @Test
-    public void shouldInvokeTheTaskExecutorOfThePlugin() {
+    void shouldInvokeTheTaskExecutorOfThePlugin() {
         final int[] executeTaskCalled = new int[1];
         PluggableTaskBuilder taskBuilder = new PluggableTaskBuilder(runIfConfigs, cancelBuilder, pluggableTask, TEST_PLUGIN_ID, "test-directory") {
             @Override
@@ -97,7 +97,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldBuildExecutorConfigPlusExecutionContextAndInvokeTheTaskExecutorWithIt() {
+    void shouldBuildExecutorConfigPlusExecutionContextAndInvokeTheTaskExecutorWithIt() {
         Task task = mock(Task.class);
 
         TaskConfig defaultTaskConfig = mock(TaskConfig.class);
@@ -131,7 +131,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldReturnDefaultValueInExecConfigWhenNoConfigValueIsProvided() {
+    void shouldReturnDefaultValueInExecConfigWhenNoConfigValueIsProvided() {
         Map<String, Map<String, String>> configMap = new HashMap<>();
         PluggableTask task = mock(PluggableTask.class);
         when(task.getPluginConfiguration()).thenReturn(new PluginConfiguration());
@@ -150,7 +150,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldReturnDefaultValueInExecConfigWhenConfigValueIsNull() {
+    void shouldReturnDefaultValueInExecConfigWhenConfigValueIsNull() {
         TaskConfig defaultTaskConfig = new TaskConfig();
         String propertyName = "URL";
         String defaultValue = "ABC.TXT";
@@ -171,7 +171,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldReturnDefaultValueInExecConfigWhenConfigValueIsEmptyString() {
+    void shouldReturnDefaultValueInExecConfigWhenConfigValueIsEmptyString() {
         TaskConfig defaultTaskConfig = new TaskConfig();
         String propertyName = "URL";
         String defaultValue = "ABC.TXT";
@@ -195,7 +195,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldReturnConfigValueInExecConfig() {
+    void shouldReturnConfigValueInExecConfig() {
         TaskConfig defaultTaskConfig = new TaskConfig();
         String propertyName = "URL";
         String defaultValue = "ABC.TXT";
@@ -218,7 +218,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldReturnPluggableTaskContext() {
+    void shouldReturnPluggableTaskContext() {
         PluggableTask task = mock(PluggableTask.class);
         when(task.getPluginConfiguration()).thenReturn(new PluginConfiguration());
 
@@ -231,7 +231,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldPublishErrorMessageIfPluginThrowsAnException() {
+    void shouldPublishErrorMessageIfPluginThrowsAnException() {
         PluggableTaskBuilder taskBuilder = new PluggableTaskBuilder(runIfConfigs, cancelBuilder, pluggableTask, TEST_PLUGIN_ID, "test-directory") {
             @Override
             protected ExecutionResult executeTask(Task task, DefaultGoPublisher publisher, EnvironmentVariableContext environmentVariableContext, Charset consoleLogCharset) {
@@ -249,7 +249,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldPublishErrorMessageIfPluginReturnsAFailureResponse() {
+    void shouldPublishErrorMessageIfPluginReturnsAFailureResponse() {
         PluggableTaskBuilder taskBuilder = new PluggableTaskBuilder(runIfConfigs, cancelBuilder, pluggableTask, TEST_PLUGIN_ID, "test-directory") {
             @Override
             protected ExecutionResult executeTask(Task task, DefaultGoPublisher publisher, EnvironmentVariableContext environmentVariableContext, Charset consoleLogCharset) {
@@ -266,7 +266,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldRegisterTaskConfigDuringExecutionAndUnregisterOnSuccessfulCompletion() {
+    void shouldRegisterTaskConfigDuringExecutionAndUnregisterOnSuccessfulCompletion() {
         final PluggableTaskBuilder builder = spy(new PluggableTaskBuilder(runIfConfigs, cancelBuilder, pluggableTask, "", ""));
         taskExtension = mock(TaskExtension.class);
         when(taskExtension.execute(eq(TEST_PLUGIN_ID), any())).thenReturn(ExecutionResult.success("yay"));
@@ -276,7 +276,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldUnsetTaskExecutionContextFromJobConsoleLoggerWhenTaskExecutionFails() {
+    void shouldUnsetTaskExecutionContextFromJobConsoleLoggerWhenTaskExecutionFails() {
         final PluggableTaskBuilder builder = spy(new PluggableTaskBuilder(runIfConfigs, cancelBuilder, pluggableTask, "", ""));
 
         taskExtension = mock(TaskExtension.class);
@@ -288,7 +288,7 @@ public class PluggableTaskBuilderTest {
     }
 
     @Test
-    public void shouldUnsetTaskExecutionContextFromJobConsoleLoggerWhenTaskExecutionThrowsException() {
+    void shouldUnsetTaskExecutionContextFromJobConsoleLoggerWhenTaskExecutionThrowsException() {
         final PluggableTaskBuilder builder = spy(new PluggableTaskBuilder(runIfConfigs, cancelBuilder, pluggableTask, "", ""));
 
         taskExtension = mock(TaskExtension.class);

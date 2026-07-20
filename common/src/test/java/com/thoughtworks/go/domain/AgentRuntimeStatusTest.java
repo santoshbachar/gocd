@@ -21,10 +21,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AgentRuntimeStatusTest {
+class AgentRuntimeStatusTest {
 
     @Test
-    public void shouldConvertToBuildState() {
+    void shouldConvertToBuildState() {
         List<AgentRuntimeStatus> agentRuntimeStatuses = List.of(AgentRuntimeStatus.Idle, AgentRuntimeStatus.Building, AgentRuntimeStatus.Cancelled);
 
         for (AgentRuntimeStatus status : AgentRuntimeStatus.values()) {
@@ -37,7 +37,7 @@ public class AgentRuntimeStatusTest {
     }
 
     @Test
-    public void shouldConvertToAgentState() {
+    void shouldConvertToAgentState() {
         List<AgentRuntimeStatus> agentRuntimeStatuses = List.of(AgentRuntimeStatus.Idle, AgentRuntimeStatus.Building, AgentRuntimeStatus.LostContact, AgentRuntimeStatus.Missing);
 
         for (AgentRuntimeStatus status : AgentRuntimeStatus.values()) {

@@ -24,29 +24,29 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StageStateTest {
+class StageStateTest {
     private Set<StageState> testedStates;
     private Set<StageResult> testedResults;
 
     @BeforeEach
-    public void shouldBeUpdatedWhenEnumerationsChange() {
+    void shouldBeUpdatedWhenEnumerationsChange() {
         testedStates = new HashSet<>();
         testedResults = new HashSet<>();
     }
 
     @AfterEach
-    public void checkAllStatesAreCovered() {
+    void checkAllStatesAreCovered() {
         shouldCoverAllStates();
     }
 
     @Test
-    public void shouldNotReturnActiveStatusIfCancelled() {
+    void shouldNotReturnActiveStatusIfCancelled() {
         isActiveShouldBe(false, StageState.Cancelled, StageState.Passed, StageState.Unknown, StageState.Failed);
         isActiveShouldBe(true, StageState.Building, StageState.Failing);
     }
 
     @Test
-    public void shouldMapStageStatesToStageResults() {
+    void shouldMapStageStatesToStageResults() {
         assertStageResultIs(StageResult.Cancelled, StageState.Cancelled);
         assertStageResultIs(StageResult.Unknown, StageState.Building, StageState.Unknown);
         assertStageResultIs(StageResult.Passed, StageState.Passed);
@@ -55,7 +55,7 @@ public class StageStateTest {
     }
 
     @Test
-    public void shouldConvertToCctrayStatus() {
+    void shouldConvertToCctrayStatus() {
         assertCCTrayStatus(StageState.Passed, "Success");
         assertCCTrayStatus(StageState.Failed, "Failure");
         assertCCTrayStatus(StageState.Building, "Success");
@@ -65,7 +65,7 @@ public class StageStateTest {
     }
 
     @Test
-    public void shouldConvertToCctrayActivity() {
+    void shouldConvertToCctrayActivity() {
         assertCCTrayActivity(StageState.Passed, "Sleeping");
         assertCCTrayActivity(StageState.Failed, "Sleeping");
         assertCCTrayActivity(StageState.Building, "Building");
@@ -75,7 +75,7 @@ public class StageStateTest {
     }
 
     @Test
-    public void shouldReturnStatusAsCompletedForPassesFailedCancelled() {
+    void shouldReturnStatusAsCompletedForPassesFailedCancelled() {
         assertStatus(StageState.Passed, "Completed");
         assertStatus(StageState.Failed, "Completed");
         assertStatus(StageState.Cancelled, "Completed");

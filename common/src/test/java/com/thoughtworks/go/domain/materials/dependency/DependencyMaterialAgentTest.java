@@ -30,19 +30,19 @@ import static com.thoughtworks.go.config.CaseInsensitiveString.cis;
 import static com.thoughtworks.go.domain.materials.MaterialAgent.NO_OP;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DependencyMaterialAgentTest {
+class DependencyMaterialAgentTest {
 
     @SuppressWarnings("SameParameterValue")
     private MaterialRevision materialRevision(String pipelineName, int pipelineCounter, String pipelineLabel,
                                               String stageName, int stageCounter) {
         DependencyMaterial material = new DependencyMaterial(cis(pipelineName), cis(stageName));
         DependencyMaterialRevision revision = DependencyMaterialRevision.create(pipelineName, pipelineCounter,
-                pipelineLabel, stageName, stageCounter);
+            pipelineLabel, stageName, stageCounter);
         return revision.convert(material, new Date());
     }
 
     @Test
-    public void shouldBeCreatedByAgentFactory() {
+    void shouldBeCreatedByAgentFactory() {
         MaterialAgentFactory factory = new MaterialAgentFactory(ProcessOutputStreamConsumer.inMemoryConsumer(), new File("blah"), new AgentIdentifier("", "", ""), null);
         MaterialAgent createdAgent = factory.createAgent(materialRevision("pipeline-name", 1, "pipeline-label", "stage-name", 1));
 

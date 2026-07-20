@@ -48,7 +48,7 @@ import static com.thoughtworks.go.util.command.ProcessOutputStreamConsumer.inMem
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MaterialRevisionTest {
+class MaterialRevisionTest {
     private static final StringRevision REVISION_0 = new StringRevision("b61d12de515d82d3a377ae3aae6e8abe516a2651");
     private static final StringRevision REVISION_2 = new StringRevision("ca3ebb67f527c0ad7ed26b789056823d8b9af23f");
     @TempDir
@@ -58,22 +58,22 @@ public class MaterialRevisionTest {
     private File workingFolder;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         HgTestRepo hgTestRepo = new HgTestRepo("hgTestRepo1", tempDir);
         hgMaterial = MaterialsMother.hgMaterial(hgTestRepo.projectRepositoryUrl());
         workingFolder = TempDirUtils.createRandomDirectoryIn(tempDir).toFile();
     }
 
     @Test
-    public void shouldGetModifiedTimeFromTheLatestModification() {
+    void shouldGetModifiedTimeFromTheLatestModification() {
         final MaterialRevision materialRevision = new MaterialRevision(MaterialsMother.hgMaterial(), multipleModificationsInHg());
         assertThat(materialRevision.getDateOfLatestModification()).isEqualTo(ModificationsMother.TODAY_CHECKIN);
     }
 
     @Test
-    public void shouldDetectChangesAfterACheckin() throws Exception {
+    void shouldDetectChangesAfterACheckin() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial,
-                hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
+            hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         checkInOneFile(hgMaterial);
         checkInOneFile(hgMaterial);
@@ -89,7 +89,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldMarkRevisionAsChanged() throws Exception {
+    void shouldMarkRevisionAsChanged() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial, hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         checkInFiles(hgMaterial, "user.doc");
@@ -99,7 +99,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldMarkRevisionAsNotChanged() throws Exception {
+    void shouldMarkRevisionAsNotChanged() throws Exception {
         List<Modification> modifications = hgMaterial.latestModification(workingFolder, new TestSubprocessExecutionContext());
         MaterialRevision original = new MaterialRevision(hgMaterial, modifications);
         checkInFiles(hgMaterial, "user.doc");
@@ -110,7 +110,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldIgnoreDocumentCheckin() throws Exception {
+    void shouldIgnoreDocumentCheckin() throws Exception {
         MaterialRevision previousRevision = new MaterialRevision(hgMaterial, hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         Filter filter = new Filter(new IgnoredFiles("**/*.doc"));
@@ -123,22 +123,22 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldIgnoreDocumentWhenCheckin() throws Exception {
+    void shouldIgnoreDocumentWhenCheckin() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial, hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         Filter filter = new Filter(new IgnoredFiles("helper/**/*.*"));
         hgMaterial.setFilter(filter);
 
         checkInFiles(hgMaterial,
-                "helper/topics/installing_go_agent.xml",
-                "helper/topics/installing_go_server.xml");
+            "helper/topics/installing_go_agent.xml",
+            "helper/topics/installing_go_server.xml");
 
         MaterialRevision newRev = findNewRevision(original, hgMaterial, workingFolder, new TestSubprocessExecutionContext());
         assertThat(newRev.filter(original)).isEqualTo(original);
     }
 
     @Test
-    public void shouldIgnoreDocumentsWithSemanticallyEqualsIgnoreFilter() throws Exception {
+    void shouldIgnoreDocumentsWithSemanticallyEqualsIgnoreFilter() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial, hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         Filter filter = new Filter(new IgnoredFiles("**/*.doc"), new IgnoredFiles("*.doc"));
@@ -151,9 +151,9 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldIncludeJavaFileWithSemanticallyEqualsIgnoreFilter() throws Exception {
+    void shouldIncludeJavaFileWithSemanticallyEqualsIgnoreFilter() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial,
-                hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
+            hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         Filter filter = new Filter(new IgnoredFiles("**/*.doc"), new IgnoredFiles("*.doc"));
         GoConfigMother.createPipelineConfig(filter, (ScmMaterialConfig) hgMaterial.config());
@@ -166,9 +166,9 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldNotIgnoreJavaFile() throws Exception {
+    void shouldNotIgnoreJavaFile() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial,
-                hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
+            hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         Filter filter = new Filter(new IgnoredFiles("**/*.doc"));
         GoConfigMother.createPipelineConfig(filter, (ScmMaterialConfig) hgMaterial.config());
@@ -179,9 +179,9 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldNotIgnoreAnyFileIfFilterIsNotDefinedForTheGivenMaterial() throws Exception {
+    void shouldNotIgnoreAnyFileIfFilterIsNotDefinedForTheGivenMaterial() throws Exception {
         MaterialRevision original = new MaterialRevision(hgMaterial,
-                hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
+            hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         Filter filter = new Filter();
         GoConfigMother.createPipelineConfig(filter, (ScmMaterialConfig) hgMaterial.config());
@@ -192,7 +192,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldMarkRevisionChangeFalseIfNoNewChangesAvailable() {
+    void shouldMarkRevisionChangeFalseIfNoNewChangesAvailable() {
         Modification modificationForRevisionTip = new Modification(new Date(), REVISION_2.getRevision(), "MOCK_LABEL-12", null);
         MaterialRevision revision = new MaterialRevision(hgMaterial, modificationForRevisionTip);
         MaterialRevision unchangedRevision = findNewRevision(revision, hgMaterial, workingFolder, new TestSubprocessExecutionContext());
@@ -201,7 +201,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldReturnOnlyLatestModificationIfNoNewChangesAvailable() {
+    void shouldReturnOnlyLatestModificationIfNoNewChangesAvailable() {
         Modification modificationForRevisionTip = new Modification("Unknown", "Unknown", null, new Date(), REVISION_2.getRevision());
         Modification olderModification = new Modification("Unknown", "Unknown", null, new Date(), REVISION_0.getRevision());
         MaterialRevision revision = new MaterialRevision(hgMaterial, modificationForRevisionTip, olderModification);
@@ -212,7 +212,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldNotConsiderChangedFlagAsPartOfEqualityAndHashCodeCheck() {
+    void shouldNotConsiderChangedFlagAsPartOfEqualityAndHashCodeCheck() {
         Modification modification = oneModifiedFile("revision1");
         SvnMaterial material = MaterialsMother.svnMaterial();
 
@@ -225,7 +225,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldDetectChangedRevision() {
+    void shouldDetectChangedRevision() {
         Modification modification1 = oneModifiedFile("revision1");
         Modification modification2 = oneModifiedFile("revision2");
         SvnMaterial material = MaterialsMother.svnMaterial();
@@ -235,16 +235,16 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldDisplayRevisionAsBuildCausedByForDependencyMaterial() {
+    void shouldDisplayRevisionAsBuildCausedByForDependencyMaterial() {
         DependencyMaterial dependencyMaterial = new DependencyMaterial(cis("upstream"), cis("stage"));
         MaterialRevision materialRevision = new MaterialRevision(dependencyMaterial, new Modification(new Date(), "upstream/2/stage/1", "1.3-2", null));
         assertThat(materialRevision.buildCausedBy()).isEqualTo("upstream/2/stage/1");
     }
 
     @Test
-    public void shouldUseLatestMaterial() {
+    void shouldUseLatestMaterial() {
         MaterialRevision original = new MaterialRevision(hgMaterial,
-                hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
+            hgMaterial.modificationsSince(workingFolder, REVISION_0, new TestSubprocessExecutionContext()));
 
         HgMaterial newMaterial = MaterialsMother.hgMaterial(hgMaterial.getUrl());
         newMaterial.setFilter(new Filter(new IgnoredFiles("**/*.txt")));
@@ -254,7 +254,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldDetectLatestAndOldestModification() {
+    void shouldDetectLatestAndOldestModification() {
         MaterialRevision materialRevision = new MaterialRevision(hgMaterial, modification("3"), modification("2"), modification("1"));
 
         assertThat(materialRevision.getLatestModification()).isEqualTo(modification("3"));
@@ -262,35 +262,35 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldDetectLatestRevision() {
+    void shouldDetectLatestRevision() {
         MaterialRevision materialRevision = new MaterialRevision(hgMaterial, modification("3"), modification("2"), modification("1"));
         assertThat(materialRevision.getRevision()).isEqualTo(new StringRevision("3"));
     }
 
     @Test
-    public void shouldDetectOldestScmRevision() {
+    void shouldDetectOldestScmRevision() {
         MaterialRevision materialRevision = new MaterialRevision(hgMaterial, modification("3"), modification("2"), modification("1"));
         assertThat(materialRevision.getOldestRevision()).isEqualTo(new StringRevision("1"));
     }
 
     @Test
-    public void shouldDetectOldestAndLatestDependencyRevision() {
+    void shouldDetectOldestAndLatestDependencyRevision() {
         DependencyMaterial dependencyMaterial = new DependencyMaterial(cis("upstream"), cis("stage"));
         MaterialRevision materialRevision = new MaterialRevision(dependencyMaterial, new Modification(new Date(), "upstream/3/stage/1", "1.3-3", null),
-                new Modification(new Date(), "upstream/2/stage/1", "1.3-2", null));
+            new Modification(new Date(), "upstream/2/stage/1", "1.3-2", null));
         assertThat(materialRevision.getOldestRevision()).isEqualTo(DependencyMaterialRevision.create("upstream/2/stage/1", "1.3-2"));
         assertThat(materialRevision.getRevision()).isEqualTo(DependencyMaterialRevision.create("upstream/3/stage/1", "1.3-3"));
     }
 
     @Test
-    public void shouldReturnNullRevisionWhenThereIsNoMaterial() {
+    void shouldReturnNullRevisionWhenThereIsNoMaterial() {
         Revision revision = new MaterialRevision(null).getRevision();
         assertThat(revision).isNotNull();
         assertThat(revision.getRevision()).isEmpty();
     }
 
     @Test
-    public void shouldReturnFullRevisionForTheLatestModification() {
+    void shouldReturnFullRevisionForTheLatestModification() {
         assertThat(hgRevision().getLatestRevisionString()).isEqualTo("012345678901234567890123456789");
     }
 
@@ -299,37 +299,37 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldReturnShortRevisionForTheLatestModification() {
+    void shouldReturnShortRevisionForTheLatestModification() {
         assertThat(hgRevision().getLatestShortRevision()).isEqualTo("012345678901");
     }
 
     @Test
-    public void shouldReturnMaterialName() {
+    void shouldReturnMaterialName() {
         assertThat(hgRevision().getMaterialName()).isEqualTo(hgMaterial.getDisplayName());
     }
 
     @Test
-    public void shouldReturnTruncatedMaterialName() {
+    void shouldReturnTruncatedMaterialName() {
         assertThat(hgRevision().getTruncatedMaterialName()).isEqualTo(hgMaterial.getTruncatedDisplayName());
     }
 
     @Test
-    public void shouldReturnMaterialType() {
+    void shouldReturnMaterialType() {
         assertThat(hgRevision().getMaterialType()).isEqualTo("Mercurial");
     }
 
     @Test
-    public void shouldReturnLatestComments() {
+    void shouldReturnLatestComments() {
         assertThat(hgRevision().getLatestComment()).isEqualTo("Checkin 012345678901234567890123456789");
     }
 
     @Test
-    public void shouldReturnLatestUser() {
+    void shouldReturnLatestUser() {
         assertThat(hgRevision().getLatestUser()).isEqualTo("user");
     }
 
     @Test
-    public void shouldRemoveFromThisWhateverModificationIsPresentInThePassedInRevision() {
+    void shouldRemoveFromThisWhateverModificationIsPresentInThePassedInRevision() {
         MaterialRevision revision = createHgMaterialWithMultipleRevisions(1, oneModifiedFile("rev2"), oneModifiedFile("rev1")).getMaterialRevision(0);
         MaterialRevision passedIn = createHgMaterialWithMultipleRevisions(1, oneModifiedFile("rev1")).getMaterialRevision(0);
 
@@ -339,7 +339,7 @@ public class MaterialRevisionTest {
     }
 
     @Test
-    public void shouldReturnCurrentIfThePassedInDoesNotHaveAnythingThatCurrentHas() {
+    void shouldReturnCurrentIfThePassedInDoesNotHaveAnythingThatCurrentHas() {
         MaterialRevision revision = createHgMaterialWithMultipleRevisions(1, oneModifiedFile("rev2")).getMaterialRevision(0);
         MaterialRevision passedIn = createHgMaterialWithMultipleRevisions(1, oneModifiedFile("rev1")).getMaterialRevision(0);
 
@@ -349,7 +349,7 @@ public class MaterialRevisionTest {
 
     private Modification modification(String revision) {
         return new Modification("user", "Checkin "
-                + revision, null, null, revision);
+            + revision, null, null, revision);
     }
 
     private void checkInOneFile(HgMaterial hgMaterial) throws Exception {

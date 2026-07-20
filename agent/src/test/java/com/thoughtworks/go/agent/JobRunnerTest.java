@@ -29,7 +29,7 @@ import static com.thoughtworks.go.util.SystemUtil.currentWorkingDirectory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class JobRunnerTest {
+class JobRunnerTest {
     private static final String SERVER_URL = "somewhere-does-not-matter";
     private JobRunner runner;
     private Work work;

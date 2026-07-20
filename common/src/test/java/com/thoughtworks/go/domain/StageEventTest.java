@@ -19,15 +19,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StageEventTest {
+class StageEventTest {
 
     @Test
-    public void allEventShouldIncludeOthers() {
+    void allEventShouldIncludeOthers() {
         assertThat(StageEvent.All.include(StageEvent.Fixed)).isTrue();
     }
 
     @Test
-    public void eventShouldIncludeItself() {
+    void eventShouldIncludeItself() {
         assertThat(StageEvent.Fixed.include(StageEvent.Fixed)).isTrue();
     }
 

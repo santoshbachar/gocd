@@ -23,7 +23,7 @@ import java.io.File;
 import static com.thoughtworks.go.util.FileUtil.isSubdirectoryOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FileUtilTest {
+class FileUtilTest {
 
     @TempDir
     File folder;

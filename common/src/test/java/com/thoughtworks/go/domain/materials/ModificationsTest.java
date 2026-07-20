@@ -33,34 +33,34 @@ import static com.thoughtworks.go.helper.ModificationsMother.multipleCheckin;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ModificationsTest {
+class ModificationsTest {
 
     @Test
-    public void shouldReturnUnknownForEmptyList() {
+    void shouldReturnUnknownForEmptyList() {
         assertThat(new Modifications().getUsername()).isEqualTo("Unknown");
     }
 
     @Test
-    public void shouldReturnFirstUsername() {
+    void shouldReturnFirstUsername() {
         Modification modification1 = new Modification("username1", "", null, new Date(), "1");
         Modification modification2 = new Modification("username2", "", null, new Date(), "2");
         assertThat(new Modifications(modification1, modification2).getUsername()).isEqualTo("username1");
     }
 
     @Test
-    public void shouldReturnUnknownRevisionForEmptyList() {
+    void shouldReturnUnknownRevisionForEmptyList() {
         assertThat(new Modifications().getRevision()).isEqualTo("Unknown");
     }
 
     @Test
-    public void shouldReturnFirstRevision() {
+    void shouldReturnFirstRevision() {
         Modification modification1 = new Modification(new Date(), "cruise/1.0/dev/1", "MOCK_LABEL-12", null);
         Modification modification2 = new Modification(new Date(), "cruise/1.0/dev/2", "MOCK_LABEL-12", null);
         assertThat(new Modifications(modification1, modification2).getRevision()).isEqualTo("cruise/1.0/dev/1");
     }
 
     @Test
-    public void shouldReturnRevisionsWithoutSpecifiedRevision() {
+    void shouldReturnRevisionsWithoutSpecifiedRevision() {
         final Modification modification1 = new Modification(new Date(), "1", "MOCK_LABEL-12", null);
         final Modification modification2 = new Modification(new Date(), "2", "MOCK_LABEL-12", null);
 
@@ -74,7 +74,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void hasModificationShouldReturnCorrectResults() {
+    void hasModificationShouldReturnCorrectResults() {
         Modifications modifications = modificationWithIds();
         assertThat(modifications.hasModification(3)).isTrue();
         assertThat(modifications.hasModification(2)).isTrue();
@@ -83,7 +83,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void hasModifcationResults() {
+    void hasModificationResults() {
         Modifications modifications = modificationWithIds();
         assertThat(modifications.since(3)).isEqualTo(new Modifications(modifcation(4)));
         assertThat(modifications.since(2)).isEqualTo(new Modifications(modifcation(4), modifcation(3)));
@@ -103,7 +103,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldUnderstandIfContainsModificationWithSameRevision() {
+    void shouldUnderstandIfContainsModificationWithSameRevision() {
         MaterialInstance materialInstance = MaterialsMother.hgMaterial().createMaterialInstance();
 
         final Modification modification = modificationWith(materialInstance, "1");
@@ -119,7 +119,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldGetLatestModificationsForPackageMaterial() {
+    void shouldGetLatestModificationsForPackageMaterial() {
         Date timestamp = new Date();
         String revisionString = "123";
         Map<String, String> data = new HashMap<>();
@@ -140,7 +140,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldGetLatestModificationsForPluggableSCMMaterial() {
+    void shouldGetLatestModificationsForPluggableSCMMaterial() {
         String revisionString = "123";
         Date timestamp = new Date();
         Map<String, String> data = new HashMap<>();
@@ -161,7 +161,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldNeverIgnorePackageMaterialModifications() {
+    void shouldNeverIgnorePackageMaterialModifications() {
         PackageMaterialConfig packageMaterialConfig = new PackageMaterialConfig();
         Filter filter = packageMaterialConfig.filter();
         assertThat(filter).isNotNull();
@@ -169,7 +169,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIncludeModificationsIfAnyFileIsNotIgnored() {
+    void shouldIncludeModificationsIfAnyFileIsNotIgnored() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("*.doc"), new IgnoredFiles("*.pdf")));
         materialConfig.setFilter(filter);
@@ -179,7 +179,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIncludeModificationsIfAnyFileIsNotIgnored1() {
+    void shouldIncludeModificationsIfAnyFileIsNotIgnored1() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("*.doc"), new IgnoredFiles("*.pdf")));
         materialConfig.setFilter(filter);
@@ -189,7 +189,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIgnoreModificationsIfAllTheIgnoresMatch() {
+    void shouldIgnoreModificationsIfAllTheIgnoresMatch() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("*.doc"), new IgnoredFiles("*.pdf")));
         materialConfig.setFilter(filter);
@@ -200,7 +200,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIgnoreModificationsIfInvertFilterAndEmptyIgnoreList() {
+    void shouldIgnoreModificationsIfInvertFilterAndEmptyIgnoreList() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter();
         materialConfig.setFilter(filter);
@@ -211,7 +211,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIgnoreModificationsIfWildcardBlacklist() {
+    void shouldIgnoreModificationsIfWildcardBlacklist() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("**/*")));
         materialConfig.setFilter(filter);
@@ -221,7 +221,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIncludeModificationsIfInvertFilterAndWildcardBlacklist() {
+    void shouldIncludeModificationsIfInvertFilterAndWildcardBlacklist() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("**/*")));
         materialConfig.setFilter(filter);
@@ -232,7 +232,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIgnoreModificationsIfInvertFilterAndSpecificFileNotChanged() {
+    void shouldIgnoreModificationsIfInvertFilterAndSpecificFileNotChanged() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("*.foo")));
         materialConfig.setFilter(filter);
@@ -243,7 +243,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIgnoreModificationsIfInvertFilterAndSpecificFileNotChanged2() {
+    void shouldIgnoreModificationsIfInvertFilterAndSpecificFileNotChanged2() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("foo/bar.baz")));
         materialConfig.setFilter(filter);
@@ -254,7 +254,7 @@ public class ModificationsTest {
     }
 
     @Test
-    public void shouldIncludeModificationsIfInvertFilterAndSpecificIsChanged() {
+    void shouldIncludeModificationsIfInvertFilterAndSpecificIsChanged() {
         HgMaterialConfig materialConfig = MaterialConfigsMother.hgMaterialConfig();
         Filter filter = new Filter(List.of(new IgnoredFiles("foo/bar.baz")));
         materialConfig.setFilter(filter);

@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 
 @ExtendWith(MockitoExtension.class)
-public class AgentControllerTest {
+class AgentControllerTest {
     @Mock
     private SslInfrastructureService sslInfrastructureService;
     @Mock
@@ -59,7 +59,7 @@ public class AgentControllerTest {
     private final AgentHealthHolder agentHealthHolder = new AgentHealthHolder(clock, pingInterval);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         agentController = createAgentController();
     }
 

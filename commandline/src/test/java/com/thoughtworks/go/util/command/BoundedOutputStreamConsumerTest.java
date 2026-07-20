@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BoundedOutputStreamConsumerTest {
+class BoundedOutputStreamConsumerTest {
 
     @Test
-    public void shouldCropLongLines() {
+    void shouldCropLongLines() {
         InMemoryStreamConsumer actualConsumer = ProcessOutputStreamConsumer.inMemoryConsumer();
         BoundedOutputStreamConsumer streamConsumer = new BoundedOutputStreamConsumer(actualConsumer, 30);
 
@@ -32,7 +32,7 @@ public class BoundedOutputStreamConsumerTest {
     }
 
     @Test
-    public void shouldNotCropShortLines() {
+    void shouldNotCropShortLines() {
         InMemoryStreamConsumer actualConsumer = ProcessOutputStreamConsumer.inMemoryConsumer();
         BoundedOutputStreamConsumer streamConsumer = new BoundedOutputStreamConsumer(actualConsumer, 30);
 
@@ -42,7 +42,7 @@ public class BoundedOutputStreamConsumerTest {
     }
 
     @Test
-    public void shouldNotCropLongLinesIfUnbounded() {
+    void shouldNotCropLongLinesIfUnbounded() {
         InMemoryStreamConsumer actualConsumer = ProcessOutputStreamConsumer.inMemoryConsumer();
         BoundedOutputStreamConsumer streamConsumer = new BoundedOutputStreamConsumer(actualConsumer, 0);
 
@@ -52,7 +52,7 @@ public class BoundedOutputStreamConsumerTest {
     }
 
     @Test
-    public void shouldKeepNoticeForSmallMaxLength() {
+    void shouldKeepNoticeForSmallMaxLength() {
         InMemoryStreamConsumer actualConsumer = ProcessOutputStreamConsumer.inMemoryConsumer();
         BoundedOutputStreamConsumer streamConsumer = new BoundedOutputStreamConsumer(actualConsumer, 10);
 

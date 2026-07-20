@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AgentSubprocessExecutionContextTest {
+class AgentSubprocessExecutionContextTest {
     @Test
-    public void shouldReturnDigestOfMaterialFingerprintConcatenatedWithAgentUUID() {
+    void shouldReturnDigestOfMaterialFingerprintConcatenatedWithAgentUUID() {
         AgentIdentifier agentIdentifier = mock(AgentIdentifier.class);
         String uuid = "agent-uuid";
         when(agentIdentifier.getUuid()).thenReturn(uuid);

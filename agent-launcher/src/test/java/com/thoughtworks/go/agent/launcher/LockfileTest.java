@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SystemStubsExtension.class)
-public class LockfileTest {
+class LockfileTest {
 
     private static final File LOCK_FILE = new File("LockFile.txt");
 
@@ -41,17 +41,17 @@ public class LockfileTest {
     private SystemProperties systemProperties;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         systemProperties.set(Lockfile.SLEEP_TIME_FOR_LAST_MODIFIED_CHECK_PROPERTY, "0");
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         Files.deleteIfExists(LOCK_FILE.toPath());
     }
 
     @Test
-    public void shouldNotExistIfNotChangedRecently() {
+    void shouldNotExistIfNotChangedRecently() {
         File mockfile = mock(File.class);
         Lockfile lockfile = new Lockfile(mockfile);
         Lockfile spy = spy(lockfile);
@@ -61,7 +61,7 @@ public class LockfileTest {
     }
 
     @Test
-    public void shouldExistIfFileExistsAndChangedRecently() {
+    void shouldExistIfFileExistsAndChangedRecently() {
         File mockfile = mock(File.class);
         Lockfile lockfile = new Lockfile(mockfile);
         Lockfile spy = spy(lockfile);
@@ -72,7 +72,7 @@ public class LockfileTest {
 
 
     @Test
-    public void shouldNotAttemptToDeleteLockFileIfItDoesNotExist() {
+    void shouldNotAttemptToDeleteLockFileIfItDoesNotExist() {
         File mockfile = mock(File.class);
         Lockfile lockfile = new Lockfile(mockfile);
         when(mockfile.exists()).thenReturn(false);
@@ -81,7 +81,7 @@ public class LockfileTest {
     }
 
     @Test
-    public void shouldSpawnTouchLoopOnSet() throws IOException {
+    void shouldSpawnTouchLoopOnSet() throws IOException {
         Lockfile lockfile = mock(Lockfile.class);
         doCallRealMethod().when(lockfile).createLock();
         doNothing().when(lockfile).touch();
@@ -91,7 +91,7 @@ public class LockfileTest {
     }
 
     @Test
-    public void shouldReturnFalseIfLockFileAlreadyExists() {
+    void shouldReturnFalseIfLockFileAlreadyExists() {
         File mockfile = mock(File.class);
         Lockfile lockfile = new Lockfile(mockfile);
         when(mockfile.exists()).thenReturn(true);
@@ -101,7 +101,7 @@ public class LockfileTest {
     }
 
     @Test
-    public void shouldReturnFalseIfUnableToSetLock() throws IOException {
+    void shouldReturnFalseIfUnableToSetLock() throws IOException {
         File mockfile = mock(File.class);
         Lockfile lockfile = spy(new Lockfile(mockfile));
         when(mockfile.exists()).thenReturn(false);
@@ -112,7 +112,7 @@ public class LockfileTest {
     }
 
     @Test
-    public void shouldReturnTrueIfCanSetLockAndDeleteLockFileWhenDeleteIsCalled() {
+    void shouldReturnTrueIfCanSetLockAndDeleteLockFileWhenDeleteIsCalled() {
         Lockfile lockfile = new Lockfile(LOCK_FILE);
         assertThat(lockfile.tryLock()).isTrue();
         lockfile.delete();
@@ -120,7 +120,7 @@ public class LockfileTest {
     }
 
     @Test
-    public void shouldNotDeleteLockFileIfTryLockDidntWork() throws IOException {
+    void shouldNotDeleteLockFileIfTryLockDidntWork() throws IOException {
         FileUtils.touch(LOCK_FILE);
         Lockfile lockfile = new Lockfile(LOCK_FILE);
         assertThat(lockfile.tryLock()).isFalse();

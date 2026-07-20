@@ -27,9 +27,9 @@ import java.util.Date;
 import static com.thoughtworks.go.config.CaseInsensitiveString.cis;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PipelineMaterialRevisionTest {
+class PipelineMaterialRevisionTest {
     @Test
-    public void shouldSetFROMRevisionSameAsTORevisionWhenDependencyMaterial() {
+    void shouldSetFROMRevisionSameAsTORevisionWhenDependencyMaterial() {
         DependencyMaterial material = new DependencyMaterial(cis("pipeline_name"), cis("stage_name"));
 
         Modification latestModification = modification(new Date(), "pipeline_name/4/stage_name/1", "4", null);
@@ -41,7 +41,7 @@ public class PipelineMaterialRevisionTest {
     }
 
     @Test
-    public void shouldNotSetFROMRevisionSameAsTORevisionWhenSCMMaterial() {
+    void shouldNotSetFROMRevisionSameAsTORevisionWhenSCMMaterial() {
         Material material = new HgMaterial("http://some_server/repo", null);
 
         Modification latestModification = modification(new Date(), "123", null, null);
@@ -54,7 +54,7 @@ public class PipelineMaterialRevisionTest {
     }
 
     @Test
-    public void shouldUpdateFROMRevisionSameAsTORevisionWhenDependencyMaterial() {
+    void shouldUpdateFROMRevisionSameAsTORevisionWhenDependencyMaterial() {
         DependencyMaterial material = new DependencyMaterial(cis("pipeline_name"), cis("stage_name"));
 
         Modification latestModification = modification(new Date(), "pipeline_name/4/stage_name/1", "4", null);
@@ -77,7 +77,7 @@ public class PipelineMaterialRevisionTest {
     }
 
     @Test
-    public void shouldUsePassedInFROMRevisionWhenSCMMaterial() {
+    void shouldUsePassedInFROMRevisionWhenSCMMaterial() {
         Material material = new HgMaterial("http://some_server/repo", null);
 
         Modification latestModification = modification(new Date(), "123", null, null);

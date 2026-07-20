@@ -26,13 +26,13 @@ import java.util.List;
 import static java.lang.String.join;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ConsoleStreamerTest {
+class ConsoleStreamerTest {
     @Test
-    public void streamProcessesAllLines() throws Exception {
+    void streamProcessesAllLines() throws Exception {
         String[] expected = new String[]{
-                "First line",
-                "Second line",
-                "Third line"
+            "First line",
+            "Second line",
+            "Third line"
         };
         final List<String> actual = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class ConsoleStreamerTest {
     }
 
     @Test
-    public void streamSkipsToStartLine() throws Exception {
+    void streamSkipsToStartLine() throws Exception {
         final List<String> actual = new ArrayList<>();
 
         try (ConsoleStreamer console = new ConsoleStreamer(makeConsoleFile("first", "second", "third", "fourth").toPath(), 2L)) {
@@ -55,11 +55,11 @@ public class ConsoleStreamerTest {
     }
 
     @Test
-    public void streamAssumesNegativeStartLineIsZero() throws Exception {
+    void streamAssumesNegativeStartLineIsZero() throws Exception {
         String[] expected = new String[]{
-                "First line",
-                "Second line",
-                "Third line"
+            "First line",
+            "Second line",
+            "Third line"
         };
         final List<String> actual = new ArrayList<>();
 
@@ -71,7 +71,7 @@ public class ConsoleStreamerTest {
     }
 
     @Test
-    public void processesNothingWhenStartLineIsBeyondEOF() throws Exception {
+    void processesNothingWhenStartLineIsBeyondEOF() throws Exception {
         final List<String> actual = new ArrayList<>();
 
         try (ConsoleStreamer console = new ConsoleStreamer(makeConsoleFile("first", "second").toPath(), 5L)) {

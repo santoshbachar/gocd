@@ -29,20 +29,20 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DirectoryCleanerTest {
+class DirectoryCleanerTest {
     private File baseFolder;
     private DirectoryCleaner cleaner;
     private InMemoryStreamConsumer consumer;
 
     @BeforeEach
-    public void createBaseDirectory(@TempDir Path tempDir) throws IOException {
+    void createBaseDirectory(@TempDir Path tempDir) throws IOException {
         consumer = ProcessOutputStreamConsumer.inMemoryConsumer();
         baseFolder = TempDirUtils.createTempDirectoryIn(tempDir, "directoryCleaner").toFile();
         cleaner = new DirectoryCleaner(baseFolder, consumer);
     }
 
     @Test
-    public void shouldDoNothingIfDirectoryIsEmpty() {
+    void shouldDoNothingIfDirectoryIsEmpty() {
         cleaner.allowed("non-existent");
         cleaner.clean();
 
@@ -50,7 +50,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldNotCleanSvnDestIfExternalIsEnabled() {
+    void shouldNotCleanSvnDestIfExternalIsEnabled() {
         File svnDest = new File(baseFolder, "test1");
         File shouldExist = new File(svnDest, "shouldExist");
         shouldExist.mkdirs();
@@ -66,7 +66,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldKeepMaterialFolderIfItContainsOtherMaterials() {
+    void shouldKeepMaterialFolderIfItContainsOtherMaterials() {
         File material1 = mkdirDir(baseFolder, "material1");
         File dirOfMaterial1 = mkdirDir(material1, "dirOfMaterial1");
         File material2 = mkdirDir(material1, "material2");
@@ -88,7 +88,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldRemoveExtraDirectoriesInRootFolder() {
+    void shouldRemoveExtraDirectoriesInRootFolder() {
         File notAllowed = new File(baseFolder, "notAllowed");
         notAllowed.mkdirs();
 
@@ -100,7 +100,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldNotRemoveAllowedDirectoriesInRootFolder() {
+    void shouldNotRemoveAllowedDirectoriesInRootFolder() {
         File allowedFolder = new File(baseFolder, "allowed");
         allowedFolder.mkdir();
 
@@ -112,7 +112,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldNotRemoveAllowedDirectoriesInSubfolder() {
+    void shouldNotRemoveAllowedDirectoriesInSubfolder() {
         File allowedFolder = new File(baseFolder, "subfolder/allowed");
         allowedFolder.mkdirs();
 
@@ -125,7 +125,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldRemoveNotAllowedDirectoriesInSubfolder() {
+    void shouldRemoveNotAllowedDirectoriesInSubfolder() {
         File allowedFolder = new File(baseFolder, "subfolder/allowed");
         allowedFolder.mkdirs();
         File notAllowedFolder = new File(baseFolder, "subfolder/notAllowed");
@@ -140,7 +140,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldDoNothingIfSubdirectoryDoesNotExist() {
+    void shouldDoNothingIfSubdirectoryDoesNotExist() {
         File allowedFolder = new File(baseFolder, "subfolder/allowed");
 
         cleaner.allowed("subfolder/allowed");
@@ -151,7 +151,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldNotRemoveAnythingIfNoAllowedWasSet() {
+    void shouldNotRemoveAnythingIfNoAllowedWasSet() {
         File allowedFolder = new File(baseFolder, "subfolder/allowed");
         allowedFolder.mkdirs();
 
@@ -162,7 +162,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldNotProcessFilesOutsideTheBaseFolder() {
+    void shouldNotProcessFilesOutsideTheBaseFolder() {
         try {
             cleaner.allowed("/../..");
             Assertions.fail("Should not allow file outside the baseDirectory");
@@ -172,7 +172,7 @@ public class DirectoryCleanerTest {
     }
 
     @Test
-    public void shouldReportDeletingFiles() {
+    void shouldReportDeletingFiles() {
         File allowedFolder = new File(baseFolder, "subfolder/allowed");
         allowedFolder.mkdirs();
 

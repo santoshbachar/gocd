@@ -27,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DefaultAgentLaunchDescriptorImplTest {
+class DefaultAgentLaunchDescriptorImplTest {
 
     @Test
-    public void contextShouldContainEnvAndPropertiesAndHostAndPort() throws Exception {
+    void contextShouldContainEnvAndPropertiesAndHostAndPort() throws Exception {
         String hostname = "xx.xx.xx";
         int port = 20;
         AgentBootstrapperArgs bootstrapperArgs = new AgentBootstrapperArgs().setServerUrl(URI.create("https://" + hostname + ":" + port + WEBAPP_CONTEXT_PATH).toURL()).setRootCertFile(null).setSslVerificationMode(AgentBootstrapperArgs.SslMode.NONE);
@@ -41,7 +41,7 @@ public class DefaultAgentLaunchDescriptorImplTest {
     }
 
     @Test
-    public void contextShouldContainBootstrapperVersionInformation() throws Exception {
+    void contextShouldContainBootstrapperVersionInformation() throws Exception {
         AgentBootstrapper bootstrapper = mock(AgentBootstrapper.class);
         when(bootstrapper.version()).thenReturn("1.2.3-1234");
 

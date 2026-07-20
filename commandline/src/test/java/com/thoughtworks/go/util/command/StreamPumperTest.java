@@ -31,10 +31,10 @@ import java.util.List;
 import static com.thoughtworks.go.util.TestUtils.sleepQuietly;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StreamPumperTest {
+class StreamPumperTest {
 
     @Test
-    public void testPumping() {
+    void testPumping() {
         String line1 = "line1";
         String line2 = "line2";
         String lines = line1 + "\n" + line2;
@@ -49,7 +49,7 @@ public class StreamPumperTest {
     }
 
     @Test
-    public void shouldKnowIfPumperExpired() throws Exception {
+    void shouldKnowIfPumperExpired() throws Exception {
         PipedOutputStream output = new PipedOutputStream();
         InputStream inputStream = new PipedInputStream(output);
         TestingClock clock = new TestingClock();
@@ -64,7 +64,7 @@ public class StreamPumperTest {
     }
 
     @Test
-    public void shouldNotHaveExpiredTimeoutWhenCompleted() throws Exception {
+    void shouldNotHaveExpiredTimeoutWhenCompleted() throws Exception {
         PipedOutputStream output = new PipedOutputStream();
         InputStream inputStream = new PipedInputStream(output);
         TestingClock clock = new TestingClock();

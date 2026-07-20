@@ -24,21 +24,21 @@ import java.net.HttpURLConnection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ChecksumValidationPublisherTest {
+class ChecksumValidationPublisherTest {
 
     private ChecksumValidationPublisher checksumValidationPublisher;
     private StubGoPublisher goPublisher;
     private File artifact;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         checksumValidationPublisher = new ChecksumValidationPublisher();
         goPublisher = new StubGoPublisher();
         artifact = new File("src/file/path");
     }
 
     @Test
-    public void testMessagesPublished_WhenMD5PropertyFileIsNotFoundOnServer() {
+    void testMessagesPublished_WhenMD5PropertyFileIsNotFoundOnServer() {
         checksumValidationPublisher.md5ChecksumFileNotFound();
         checksumValidationPublisher.publish(HttpURLConnection.HTTP_OK, artifact, goPublisher);
         assertThat(goPublisher.getMessage()).doesNotContain(String.format("[WARN] The md5checksum value of the artifact [%s] was not found on the server. Hence, Go could not verify the integrity of its contents.", artifact));
@@ -47,13 +47,13 @@ public class ChecksumValidationPublisherTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenMd5ValuesMismatch() {
+    void shouldThrowExceptionWhenMd5ValuesMismatch() {
         checksumValidationPublisher.md5Mismatch(artifact.getPath());
         try {
             checksumValidationPublisher.publish(HttpURLConnection.HTTP_OK, artifact, goPublisher);
             fail("Should throw exception when checksums do not match.");
         } catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo(String.format("Artifact download failed for [%s]",artifact));
+            assertThat(e.getMessage()).isEqualTo(String.format("Artifact download failed for [%s]", artifact));
             assertThat(goPublisher.getMessage()).contains(String.format("[ERROR] Verification of the integrity of the artifact [%s] failed. The artifact file on the server may have changed since its original upload.", artifact));
         }
     }

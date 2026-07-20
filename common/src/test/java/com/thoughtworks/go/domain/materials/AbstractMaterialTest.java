@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
-public class AbstractMaterialTest {
+class AbstractMaterialTest {
 
     private static class TestMaterial extends AbstractMaterial {
         private static final AtomicInteger PIPELINE_UNIQUE_ATTRIBUTE_ADDED = new AtomicInteger(0);
@@ -158,7 +158,7 @@ public class AbstractMaterialTest {
     }
 
     @Test
-    public void shouldCacheCriteriaAndAttributeMap() {
+    void shouldCacheCriteriaAndAttributeMap() {
         TestMaterial testMaterial = new TestMaterial("foo");
 
         Map<String, Object> sqlCriteria = testMaterial.getSqlCriteria();
@@ -174,7 +174,7 @@ public class AbstractMaterialTest {
     }
 
     @Test
-    public void shouldCachePipelineUniqueFingerprint() {
+    void shouldCachePipelineUniqueFingerprint() {
         TestMaterial testMaterial = new TestMaterial("foo");
 
         String pipelineUniqueFingerprint = testMaterial.getPipelineUniqueFingerprint();
@@ -184,34 +184,34 @@ public class AbstractMaterialTest {
     }
 
     @Test
-    public void shouldReturnFullNameIfTheLengthIsLessThanGivenThreshold() {
+    void shouldReturnFullNameIfTheLengthIsLessThanGivenThreshold() {
         AbstractMaterial material = new TestMaterial("foo_bar_baz_quuz_ban");
         assertThat(material.getTruncatedDisplayName()).isEqualTo("foo_bar_baz_quuz_ban");
     }
 
     @Test
-    public void shouldReturnTruncatedNameIfTheLengthIsGreaterThanGivenThreshold() {
+    void shouldReturnTruncatedNameIfTheLengthIsGreaterThanGivenThreshold() {
         AbstractMaterial material = new TestMaterial("foo_bar_baz_quuz_ban_pavan");
         assertThat(material.getTruncatedDisplayName()).isEqualTo("foo_bar_ba..._ban_pavan");
     }
 
     @Test
-    public void shouldNotIgnoreForSchedulingByDefault_sinceItOnlyAppliesToDependencyMaterial() {
+    void shouldNotIgnoreForSchedulingByDefault_sinceItOnlyAppliesToDependencyMaterial() {
         AbstractMaterial material = new TestMaterial("salty_sumatran_rhinoceros");
         assertThat(material.ignoreForScheduling()).isFalse();
     }
 
     @Test
-    public void shouldThrowExceptionOnCheckConnection() {
+    void shouldThrowExceptionOnCheckConnection() {
         TestMaterial material = new TestMaterial("name");
         SubprocessExecutionContext executionContext = mock(SubprocessExecutionContext.class);
         assertThatCode(() -> material.checkConnection(executionContext))
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("'checkConnection' cannot be performed on material of type name");
+            .isInstanceOf(UnsupportedOperationException.class)
+            .hasMessage("'checkConnection' cannot be performed on material of type name");
     }
 
     @Test
-    public void updateConfigShouldIgnoreNonPasswordAwareConfig() {
+    void updateConfigShouldIgnoreNonPasswordAwareConfig() {
         MaterialConfig config = mock(MaterialConfig.class);
         SvnMaterial passwordAwareMaterial = new SvnMaterial("url", "username", "password", false);
         passwordAwareMaterial.updateFromConfig(config);
@@ -219,7 +219,7 @@ public class AbstractMaterialTest {
     }
 
     @Test
-    public void updateConfigShouldTakeUserPassFromPasswordAwareConfig() {
+    void updateConfigShouldTakeUserPassFromPasswordAwareConfig() {
         SvnMaterialConfig config = mock(SvnMaterialConfig.class);
         when(config.getUserName()).thenReturn("newUsername");
         when(config.getPassword()).thenReturn("newPassword");

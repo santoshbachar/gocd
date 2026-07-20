@@ -51,7 +51,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class FetchPluggableArtifactBuilderTest {
+class FetchPluggableArtifactBuilderTest {
     private static final String PLUGIN_ID = "cd.go.s3";
 
     private Path metadataDest;
@@ -65,7 +65,7 @@ public class FetchPluggableArtifactBuilderTest {
     private PluginRequestProcessorRegistry registry;
 
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws Exception {
+    void setUp(@TempDir Path tempDir) throws Exception {
         publisher = mock(DefaultGoPublisher.class);
         artifactExtension = mock(ArtifactExtension.class);
         checksumFileHandler = mock(ChecksumFileHandler.class);
@@ -88,7 +88,7 @@ public class FetchPluggableArtifactBuilderTest {
     }
 
     @Test
-    public void shouldCallPublisherToFetchMetadataFile() {
+    void shouldCallPublisherToFetchMetadataFile() {
         final FetchPluggableArtifactBuilder builder = new FetchPluggableArtifactBuilder(new RunIfConfigs(), new NullBuilder(), "", jobIdentifier, artifactStore, fetchPluggableArtifactTask.getConfiguration(), fetchPluggableArtifactTask.getArtifactId(), sourceOnServer, metadataDest.toFile(), checksumFileHandler);
 
         builder.build(publisher, new EnvironmentVariableContext(), null, artifactExtension, registry, UTF_8);
@@ -104,7 +104,7 @@ public class FetchPluggableArtifactBuilderTest {
     }
 
     @Test
-    public void shouldCallArtifactExtension() {
+    void shouldCallArtifactExtension() {
         final FetchPluggableArtifactBuilder builder = new FetchPluggableArtifactBuilder(new RunIfConfigs(), new NullBuilder(), "", jobIdentifier, artifactStore, fetchPluggableArtifactTask.getConfiguration(), fetchPluggableArtifactTask.getArtifactId(), sourceOnServer, metadataDest.toFile(), checksumFileHandler);
 
         builder.build(publisher, new EnvironmentVariableContext(), null, artifactExtension, registry, UTF_8);
@@ -113,7 +113,7 @@ public class FetchPluggableArtifactBuilderTest {
     }
 
     @Test
-    public void shouldCallArtifactExtensionWithMetadata() throws IOException {
+    void shouldCallArtifactExtensionWithMetadata() throws IOException {
         final FetchPluggableArtifactBuilder builder = new FetchPluggableArtifactBuilder(new RunIfConfigs(), new NullBuilder(), "", jobIdentifier, artifactStore, fetchPluggableArtifactTask.getConfiguration(), fetchPluggableArtifactTask.getArtifactId(), sourceOnServer, metadataDest.toFile(), checksumFileHandler);
         final Map<String, Object> metadata = Map.of("Version", "10.12.0");
 
@@ -125,7 +125,7 @@ public class FetchPluggableArtifactBuilderTest {
     }
 
     @Test
-    public void shouldRegisterAndDeRegisterArtifactRequestProcessBeforeAndAfterPublishingPluggableArtifact() throws IOException {
+    void shouldRegisterAndDeRegisterArtifactRequestProcessBeforeAndAfterPublishingPluggableArtifact() throws IOException {
         final FetchPluggableArtifactBuilder builder = new FetchPluggableArtifactBuilder(new RunIfConfigs(), new NullBuilder(), "", jobIdentifier, artifactStore, fetchPluggableArtifactTask.getConfiguration(), fetchPluggableArtifactTask.getArtifactId(), sourceOnServer, metadataDest.toFile(), checksumFileHandler);
         final Map<String, Object> metadata = Map.of("Version", "10.12.0");
 
@@ -140,7 +140,7 @@ public class FetchPluggableArtifactBuilderTest {
     }
 
     @Test
-    public void shouldUpdateEnvironmentVariableContextAfterFetchingArtifact() {
+    void shouldUpdateEnvironmentVariableContextAfterFetchingArtifact() {
         final FetchPluggableArtifactBuilder builder = new FetchPluggableArtifactBuilder(new RunIfConfigs(), new NullBuilder(), "", jobIdentifier, artifactStore, fetchPluggableArtifactTask.getConfiguration(), fetchPluggableArtifactTask.getArtifactId(), sourceOnServer, metadataDest.toFile(), checksumFileHandler);
 
         EnvironmentVariableContext environmentVariableContext = new EnvironmentVariableContext();

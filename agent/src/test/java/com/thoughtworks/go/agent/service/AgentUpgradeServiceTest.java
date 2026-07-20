@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SystemStubsExtension.class)
-public class AgentUpgradeServiceTest {
+class AgentUpgradeServiceTest {
     @SystemStub
     private SystemProperties systemProperties;
 

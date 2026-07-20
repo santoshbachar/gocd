@@ -31,37 +31,37 @@ import java.nio.file.Path;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ChecksumFileHandlerTest {
+class ChecksumFileHandlerTest {
 
     private File file;
     private ChecksumFileHandler checksumFileHandler;
 
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws Exception {
+    void setUp(@TempDir Path tempDir) throws Exception {
         file = Files.createTempFile(tempDir, "checksum", null).toFile();
         checksumFileHandler = new ChecksumFileHandler(file);
         new SystemEnvironment().set(SystemEnvironment.SERVICE_URL, "http://foo/go");
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         new SystemEnvironment().clearProperty(SystemEnvironment.SERVICE_URL.propertyName());
     }
 
     @Test
-    public void shouldGenerateChecksumFileUrl() {
+    void shouldGenerateChecksumFileUrl() {
         String url = checksumFileHandler.url("cruise/1/stage/1/job");
         assertThat(url).isEqualTo("http://foo/go/remoting/files/cruise/1/stage/1/job/cruise-output/md5.checksum");
     }
 
     @Test
-    public void shouldStoreTheMd5ChecksumOnTheAgent() throws IOException {
+    void shouldStoreTheMd5ChecksumOnTheAgent() throws IOException {
         checksumFileHandler.handle(new ByteArrayInputStream("Hello World".getBytes()));
         assertThat(Files.readString(file.toPath(), UTF_8)).isEqualTo("Hello World");
     }
 
     @Test
-    public void shouldDeleteOldMd5ChecksumFileIfItWasNotFoundOnTheServer() throws IOException {
+    void shouldDeleteOldMd5ChecksumFileIfItWasNotFoundOnTheServer() throws IOException {
         StubGoPublisher goPublisher = new StubGoPublisher();
         file.createNewFile();
 
@@ -71,7 +71,7 @@ public class ChecksumFileHandlerTest {
     }
 
     @Test
-    public void shouldRetainMd5ChecksumFileIfItIsDownloadedSuccessfully() throws IOException {
+    void shouldRetainMd5ChecksumFileIfItIsDownloadedSuccessfully() throws IOException {
         StubGoPublisher goPublisher = new StubGoPublisher();
         file.createNewFile();
 
@@ -82,39 +82,39 @@ public class ChecksumFileHandlerTest {
     }
 
     @Test
-    public void shouldHandleResultIfHttpCodeSaysFileNotFound() {
+    void shouldHandleResultIfHttpCodeSaysFileNotFound() {
         StubGoPublisher goPublisher = new StubGoPublisher();
         assertThat(checksumFileHandler.handleResult(HttpURLConnection.HTTP_NOT_FOUND, goPublisher)).isTrue();
         assertThat(goPublisher.getMessage()).contains("[WARN] The md5checksum property file was not found on the server. Hence, Go can not verify the integrity of the artifacts.");
     }
 
     @Test
-    public void shouldHandleResultIfHttpCodeIsSuccessful() {
+    void shouldHandleResultIfHttpCodeIsSuccessful() {
         StubGoPublisher goPublisher = new StubGoPublisher();
         assertThat(checksumFileHandler.handleResult(HttpURLConnection.HTTP_OK, goPublisher)).isTrue();
     }
 
     @Test
-    public void shouldHandleResultIfHttpCodeSaysFileNotModified() {
+    void shouldHandleResultIfHttpCodeSaysFileNotModified() {
         StubGoPublisher goPublisher = new StubGoPublisher();
         assertThat(checksumFileHandler.handleResult(HttpURLConnection.HTTP_NOT_MODIFIED, goPublisher)).isTrue();
     }
 
     @Test
-    public void shouldHandleResultIfHttpCodeSaysFilePermissionDenied() {
+    void shouldHandleResultIfHttpCodeSaysFilePermissionDenied() {
         StubGoPublisher goPublisher = new StubGoPublisher();
         assertThat(checksumFileHandler.handleResult(HttpURLConnection.HTTP_FORBIDDEN, goPublisher)).isFalse();
     }
 
     @Test
-    public void shouldGetArtifactMd5Checksum() throws IOException {
+    void shouldGetArtifactMd5Checksum() throws IOException {
         checksumFileHandler.handle(new ByteArrayInputStream("Hello!!!1".getBytes()));
         ArtifactMd5Checksums artifactMd5Checksums = checksumFileHandler.getArtifactMd5Checksums();
         assertThat(artifactMd5Checksums).isEqualTo(new ArtifactMd5Checksums(file));
     }
 
     @Test
-    public void shouldReturnNullArtifactMd5ChecksumIfFileDoesNotExist() {
+    void shouldReturnNullArtifactMd5ChecksumIfFileDoesNotExist() {
         file.delete();
         assertThat(checksumFileHandler.getArtifactMd5Checksums()).isNull();
     }

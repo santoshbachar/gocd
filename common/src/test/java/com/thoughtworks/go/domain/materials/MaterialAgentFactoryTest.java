@@ -38,7 +38,7 @@ import static com.thoughtworks.go.domain.materials.MaterialAgent.NO_OP;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class MaterialAgentFactoryTest {
+class MaterialAgentFactoryTest {
     @TempDir
     public File tempWorkingDirectory;
 
@@ -46,10 +46,10 @@ public class MaterialAgentFactoryTest {
     private SCMExtension scmExtension;
 
     @Test
-    public void shouldCreateMaterialAgent_withAgentsUuidAsSubprocessExecutionContextNamespace() {
+    void shouldCreateMaterialAgent_withAgentsUuidAsSubprocessExecutionContextNamespace() {
         String agentUuid = "uuid-01783738";
         MaterialAgentFactory factory = new MaterialAgentFactory(new InMemoryStreamConsumer(), tempWorkingDirectory,
-                new AgentIdentifier("host", "1.1.1.1", agentUuid), scmExtension);
+            new AgentIdentifier("host", "1.1.1.1", agentUuid), scmExtension);
         GitMaterial gitMaterial = new GitMaterial("http://foo", "master", "dest_folder");
 
         MaterialAgent agent = factory.createAgent(new MaterialRevision(gitMaterial));
@@ -61,7 +61,7 @@ public class MaterialAgentFactoryTest {
     }
 
     @Test
-    public void shouldGetPackageMaterialAgent() {
+    void shouldGetPackageMaterialAgent() {
         File workingDirectory = new File("/tmp/workingDirectory");
         MaterialRevision revision = new MaterialRevision(new PackageMaterial(), new Modifications());
         MaterialAgentFactory factory = new MaterialAgentFactory(null, workingDirectory, null, scmExtension);
@@ -71,7 +71,7 @@ public class MaterialAgentFactoryTest {
     }
 
     @Test
-    public void shouldGetPluggableSCMMaterialAgent() {
+    void shouldGetPluggableSCMMaterialAgent() {
         File workingDirectory = new File("/tmp/workingDirectory");
         MaterialRevision revision = new MaterialRevision(new PluggableSCMMaterial(), new Modifications());
         MaterialAgentFactory factory = new MaterialAgentFactory(null, workingDirectory, null, scmExtension);

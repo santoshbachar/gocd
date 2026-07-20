@@ -30,7 +30,7 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LogConfiguratorTest {
+class LogConfiguratorTest {
 
     private final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
     private final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
@@ -39,7 +39,7 @@ public class LogConfiguratorTest {
     private PrintStream originalOut;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         originalErr = System.err;
         originalOut = System.out;
 
@@ -48,13 +48,13 @@ public class LogConfiguratorTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         System.setErr(originalErr);
         System.setOut(originalOut);
     }
 
     @Test
-    public void shouldUseDefaultConfigIfUserSpecifiedConfigFileIsNotFound() {
+    void shouldUseDefaultConfigIfUserSpecifiedConfigFileIsNotFound() {
         final boolean[] defaultLoggingInvoked = {false};
         LogConfigurator logConfigurator = new LogConfigurator("non-existant-dir", "non-existant.properties") {
             @Override
@@ -72,7 +72,7 @@ public class LogConfiguratorTest {
     }
 
     @Test
-    public void shouldUseDefaultConfigFromClasspathIfUserSpecifiedConfigFileIsNotFound() {
+    void shouldUseDefaultConfigFromClasspathIfUserSpecifiedConfigFileIsNotFound() {
         final URL[] initializeFromPropertyResource = {null};
         LogConfigurator logConfigurator = new LogConfigurator("xxx", "logging-test-logback.xml") {
             @Override
@@ -90,7 +90,7 @@ public class LogConfiguratorTest {
     }
 
     @Test
-    public void shouldFallbackToDefaultFileIfConfigFound(@TempDir Path temporaryFolder) throws Exception {
+    void shouldFallbackToDefaultFileIfConfigFound(@TempDir Path temporaryFolder) throws Exception {
         Path configFile = Files.createTempFile(temporaryFolder, "config", null);
         final URL[] initializeFromPropertiesFile = {null};
         LogConfigurator logConfigurator = new LogConfigurator(temporaryFolder.toAbsolutePath().toString(), configFile.getFileName().toString()) {

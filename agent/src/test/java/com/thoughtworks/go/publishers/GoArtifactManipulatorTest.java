@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class GoArtifactManipulatorTest {
+class GoArtifactManipulatorTest {
 
     private HttpService httpService;
     private Path tempFile;
@@ -53,7 +53,7 @@ public class GoArtifactManipulatorTest {
     private Path artifactFolder;
 
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws Exception {
+    void setUp(@TempDir Path tempDir) throws Exception {
         httpService = mock(HttpService.class);
         artifactFolder = TempDirUtils.createTempDirectoryIn(tempDir, "artifact_folder");
         tempFile = artifactFolder.resolve("file.txt");
@@ -65,7 +65,7 @@ public class GoArtifactManipulatorTest {
     }
 
     @Test
-    public void shouldBombWithErrorWhenStatusCodeReturnedIsRequestEntityTooLarge() throws IOException {
+    void shouldBombWithErrorWhenStatusCodeReturnedIsRequestEntityTooLarge() throws IOException {
         when(httpService.upload(any(), eq(tempFile.toFile().length()), any(), any())).thenReturn(HttpURLConnection.HTTP_ENTITY_TOO_LARGE);
 
         String expectedMessage = "Artifact upload for file " + tempFile.toAbsolutePath() + " (Size: " + tempFile.toFile().length() + ") was denied by the server. This usually happens when server runs out of disk space.";
@@ -79,7 +79,7 @@ public class GoArtifactManipulatorTest {
     }
 
     @Test
-    public void shouldUploadArtifactChecksumAlongWithArtifact() throws IOException {
+    void shouldUploadArtifactChecksumAlongWithArtifact() throws IOException {
         String data = "Some text whose checksum can be asserted";
         final String md5 = DigestUtils.md5Hex(data);
         Files.writeString(tempFile, data, UTF_8);
@@ -92,7 +92,7 @@ public class GoArtifactManipulatorTest {
     }
 
     @Test
-    public void shouldUploadArtifactChecksumWithRightPathWhenArtifactDestinationPathIsEmpty() throws IOException {
+    void shouldUploadArtifactChecksumWithRightPathWhenArtifactDestinationPathIsEmpty() throws IOException {
         String data = "Some text whose checksum can be asserted";
         final String md5 = DigestUtils.md5Hex(data);
         Files.writeString(tempFile, data, UTF_8);
@@ -105,7 +105,7 @@ public class GoArtifactManipulatorTest {
     }
 
     @Test
-    public void shouldUploadArtifactChecksumForADirectory() throws IOException {
+    void shouldUploadArtifactChecksumForADirectory() throws IOException {
         String data = "Some text whose checksum can be asserted";
         String secondData = "some more";
 

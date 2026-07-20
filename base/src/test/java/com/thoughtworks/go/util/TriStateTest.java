@@ -22,12 +22,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TriStateTest {
+class TriStateTest {
 
     private final BooleanConsumer consumer = mock();
 
     @Test
-    public void testTrueShouldBeTruthy() {
+    void testTrueShouldBeTruthy() {
         TriState triState = TriState.from("tRuE");
         assertTrue(triState.isPresent());
         assertTrue(triState.get());
@@ -36,7 +36,7 @@ public class TriStateTest {
     }
 
     @Test
-    public void testFalseShouldBeTruthy() {
+    void testFalseShouldBeTruthy() {
         TriState triState = TriState.from("FaLsE");
         assertTrue(triState.isPresent());
         assertFalse(triState.get());
@@ -45,7 +45,7 @@ public class TriStateTest {
     }
 
     @Test
-    public void testUnsetShouldBeTruthy() {
+    void testUnsetShouldBeTruthy() {
         TriState triState = TriState.from(null);
         assertFalse(triState.isPresent());
         assertThatThrownBy(triState::get).isInstanceOf(IllegalStateException.class);
@@ -54,13 +54,13 @@ public class TriStateTest {
     }
 
     @Test
-    public void testPrimitivesShouldParse() {
+    void testPrimitivesShouldParse() {
         assertThat(TriState.from(true)).isEqualTo(TriState.TRUE);
         assertThat(TriState.from(false)).isEqualTo(TriState.FALSE);
     }
 
     @Test
-    public void testBadStringShouldRaiseError() {
+    void testBadStringShouldRaiseError() {
         assertThrows(IllegalArgumentException.class, () -> TriState.from("foo"));
     }
 }

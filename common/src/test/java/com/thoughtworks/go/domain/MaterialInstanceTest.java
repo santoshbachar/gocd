@@ -28,9 +28,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MaterialInstanceTest {
+class MaterialInstanceTest {
     @Test
-    public void shouldGenerateUniqueFingerprintOnCreation() {
+    void shouldGenerateUniqueFingerprintOnCreation() {
         MaterialInstance one = new HgMaterial("url", null).createMaterialInstance();
         MaterialInstance two = new HgMaterial("otherurl", null).createMaterialInstance();
         assertThat(one.getFingerprint()).isNotNull();
@@ -38,7 +38,7 @@ public class MaterialInstanceTest {
     }
 
     @Test
-    public void shouldSerializeAndUnserializeAllAttributes() throws IOException, ClassNotFoundException {
+    void shouldSerializeAndUnserializeAllAttributes() throws IOException, ClassNotFoundException {
         HgMaterial m = MaterialsMother.hgMaterial("url");
         MaterialInstance materialInstance = m.createMaterialInstance();
         materialInstance.setId(10);
@@ -49,7 +49,7 @@ public class MaterialInstanceTest {
     }
 
     @Test
-    public void shouldAnswerRequiresUpdate() {
+    void shouldAnswerRequiresUpdate() {
         PluggableSCMMaterial material = MaterialsMother.pluggableSCMMaterial();
         MaterialInstance materialInstance = material.createMaterialInstance();
         // null

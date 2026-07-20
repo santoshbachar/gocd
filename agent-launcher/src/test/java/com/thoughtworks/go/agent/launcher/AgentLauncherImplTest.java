@@ -43,18 +43,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(FakeGoServerExtension.class)
-public class AgentLauncherImplTest {
+class AgentLauncherImplTest {
 
     @GoTestResource
     public FakeGoServer server;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         cleanup();
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         cleanup();
     }
 
@@ -67,7 +67,7 @@ public class AgentLauncherImplTest {
     }
 
     @Test
-    public void shouldNotThrowException_insteadReturnAppropriateErrorCode_whenSomethingGoesWrongInLaunch() {
+    void shouldNotThrowException_insteadReturnAppropriateErrorCode_whenSomethingGoesWrongInLaunch() {
         AgentLaunchDescriptor launchDesc = mock(AgentLaunchDescriptor.class);
         when(launchDesc.context().get(AgentBootstrapperArgs.SERVER_URL)).thenThrow(new RuntimeException("Ouch!"));
         assertThat(new AgentLauncherImpl().launch(launchDesc))
@@ -85,7 +85,7 @@ public class AgentLauncherImplTest {
     }
 
     @Test
-    public void shouldDownloadLauncherJarIfLocalCopyIsStale() throws IOException {
+    void shouldDownloadLauncherJarIfLocalCopyIsStale() throws IOException {
         //because new invocation will take care of pulling latest agent down, and will then operate on it with the latest launcher -jj
         File staleJar = randomFile(AGENT_LAUNCHER_JAR);
         long original = staleJar.length();
@@ -95,7 +95,7 @@ public class AgentLauncherImplTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldDownload_AgentJar_IfTheCurrentJarIsStale() throws Exception {
+    void shouldDownload_AgentJar_IfTheCurrentJarIsStale() throws Exception {
         TEST_AGENT_LAUNCHER.copyTo(AGENT_LAUNCHER_JAR);
         File staleJar = randomFile(AGENT_BINARY_JAR);
         long original = staleJar.length();
@@ -105,7 +105,7 @@ public class AgentLauncherImplTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void should_NOT_Download_AgentJar_IfTheCurrentJarIsUpToDate() throws Exception {
+    void should_NOT_Download_AgentJar_IfTheCurrentJarIsUpToDate() throws Exception {
         TEST_AGENT_LAUNCHER.copyTo(AGENT_LAUNCHER_JAR);
         TEST_AGENT.copyTo(AGENT_BINARY_JAR);
 
@@ -116,7 +116,7 @@ public class AgentLauncherImplTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void should_NOT_Download_TfsImplJar_IfTheCurrentJarIsUpToDate() throws Exception {
+    void should_NOT_Download_TfsImplJar_IfTheCurrentJarIsUpToDate() throws Exception {
         TEST_AGENT_LAUNCHER.copyTo(AGENT_LAUNCHER_JAR);
         TEST_AGENT.copyTo(AGENT_BINARY_JAR);
         TEST_TFS_IMPL.copyTo(TFS_IMPL_JAR);
@@ -127,7 +127,7 @@ public class AgentLauncherImplTest {
     }
 
     @Test
-    public void shouldDownloadLauncherJarIfLocalCopyIsStale_butShouldReturnWithoutDownloadingOrLaunchingAgent() throws Exception {
+    void shouldDownloadLauncherJarIfLocalCopyIsStale_butShouldReturnWithoutDownloadingOrLaunchingAgent() throws Exception {
         File launcher = randomFile(AGENT_LAUNCHER_JAR);
         long original = launcher.length();
         File agentFile = randomFile(AGENT_BINARY_JAR);

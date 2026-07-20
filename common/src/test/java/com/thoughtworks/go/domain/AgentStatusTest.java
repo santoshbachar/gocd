@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AgentStatusTest {
+class AgentStatusTest {
     @Test
-    public void shouldCompareStatusAsExpected() {
+    void shouldCompareStatusAsExpected() {
         AgentStatus statusInOrder[] = new AgentStatus[]{AgentStatus.Pending, AgentStatus.LostContact, AgentStatus.Missing,
             AgentStatus.Building, AgentStatus.Cancelled, AgentStatus.Idle, AgentStatus.Disabled};
         AgentStatus previous = null;

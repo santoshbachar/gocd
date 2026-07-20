@@ -23,10 +23,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class StageResultTest {
+class StageResultTest {
 
     @Test
-    public void shouldGenerateEventByResults() {
+    void shouldGenerateEventByResults() {
         assertThat(StageResult.Cancelled.toEventFromPrevious(StageResult.Passed)).isEqualTo(StageEvent.Cancelled);
         assertThat(StageResult.Cancelled.toEventFromPrevious(StageResult.Failed)).isEqualTo(StageEvent.Cancelled);
         assertThat(StageResult.Cancelled.toEventFromPrevious(StageResult.Cancelled)).isEqualTo(StageEvent.Cancelled);
@@ -44,7 +44,7 @@ public class StageResultTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfNewStatusIsUnknown() {
+    void shouldThrowExceptionIfNewStatusIsUnknown() {
         try {
             StageResult.Unknown.toEventFromPrevious(StageResult.Passed);
             fail("shouldThrowExceptionIfNewStatusIsUnknown");
@@ -54,7 +54,7 @@ public class StageResultTest {
     }
 
     @Test
-    public void shouldMakeSureThatAnyChangeToThisEnumIsReflectedInQueriesInStagesXML() {
+    void shouldMakeSureThatAnyChangeToThisEnumIsReflectedInQueriesInStagesXML() {
         assertThat(StageResult.values().length).isEqualTo(4);
         List<StageResult> actualStageResults = List.of(StageResult.values());
 

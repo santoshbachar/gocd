@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DefaultAgentRegistryTest {
+class DefaultAgentRegistryTest {
     private DefaultAgentRegistry agentRegistry;
     private static final String GUID = "guid";
     private static final String TOKEN = "token";
@@ -30,7 +30,7 @@ public class DefaultAgentRegistryTest {
     private TokenService tokenService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         agentRegistry = new DefaultAgentRegistry();
         guidService = new GuidService();
         tokenService = new TokenService();
@@ -40,13 +40,13 @@ public class DefaultAgentRegistryTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         guidService.delete();
         tokenService.delete();
     }
 
     @Test
-    public void shouldCreateGuidIfOneNotAlreadySet() {
+    void shouldCreateGuidIfOneNotAlreadySet() {
         guidService.delete();
         String guid = agentRegistry.uuid();
         assertNotNull(guid);
@@ -55,12 +55,12 @@ public class DefaultAgentRegistryTest {
     }
 
     @Test
-    public void shouldUseGuidThatAlreadyExists() {
+    void shouldUseGuidThatAlreadyExists() {
         assertThat(agentRegistry.uuid()).isEqualTo(GUID);
     }
 
     @Test
-    public void shouldCheckGuidPresent() {
+    void shouldCheckGuidPresent() {
         assertTrue(agentRegistry.guidPresent());
 
         guidService.delete();
@@ -68,12 +68,12 @@ public class DefaultAgentRegistryTest {
     }
 
     @Test
-    public void shouldGetTokenFromFile() {
+    void shouldGetTokenFromFile() {
         assertThat(agentRegistry.token()).isEqualTo(TOKEN);
     }
 
     @Test
-    public void shouldCheckTokenPresent() {
+    void shouldCheckTokenPresent() {
         assertTrue(agentRegistry.tokenPresent());
 
         tokenService.delete();
@@ -82,7 +82,7 @@ public class DefaultAgentRegistryTest {
     }
 
     @Test
-    public void shouldStoreTokenToDisk() {
+    void shouldStoreTokenToDisk() {
         assertThat(agentRegistry.token()).isEqualTo(TOKEN);
 
         agentRegistry.storeTokenToDisk("foo-token");
@@ -91,7 +91,7 @@ public class DefaultAgentRegistryTest {
     }
 
     @Test
-    public void shouldDeleteTokenFromDisk() {
+    void shouldDeleteTokenFromDisk() {
         assertThat(agentRegistry.token()).isEqualTo(TOKEN);
         assertTrue(agentRegistry.tokenPresent());
 

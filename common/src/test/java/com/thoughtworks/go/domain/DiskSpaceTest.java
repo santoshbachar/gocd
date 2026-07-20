@@ -21,10 +21,10 @@ import static com.thoughtworks.go.util.FileSizeUtils.fromGigaToBytes;
 import static com.thoughtworks.go.util.FileSizeUtils.fromMegaToBytes;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DiskSpaceTest {
+class DiskSpaceTest {
 
     @Test
-    public void shouldCompareDiskSpace() {
+    void shouldCompareDiskSpace() {
         assertThat(new DiskSpace(10L).compareTo(new DiskSpace(12L))).isLessThan(0);
         assertThat(DiskSpace.unknownDiskSpace().compareTo(new DiskSpace(12L))).isLessThan(0);
         assertThat(new DiskSpace(10L).compareTo(DiskSpace.unknownDiskSpace())).isGreaterThan(0);
@@ -32,7 +32,7 @@ public class DiskSpaceTest {
     }
 
     @Test
-    public void shouldProduceHumanReadableStringRepresentation() {
+    void shouldProduceHumanReadableStringRepresentation() {
         assertThat(new DiskSpace(fromMegaToBytes(3 * 512)).toString()).isEqualTo("1.5 GB");
         assertThat(new DiskSpace(fromGigaToBytes(10)).toString()).isEqualTo("10.0 GB");
         assertThat(DiskSpace.unknownDiskSpace().toString()).isEqualTo("Unknown");

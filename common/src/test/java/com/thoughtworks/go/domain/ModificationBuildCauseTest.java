@@ -36,24 +36,24 @@ import static com.thoughtworks.go.helper.ModificationsMother.multipleModificatio
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ModificationBuildCauseTest {
+class ModificationBuildCauseTest {
 
     private BuildCause buildCause;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MaterialRevisions materialRevisions = multipleModifications();
         buildCause = BuildCause.createWithModifications(materialRevisions, "");
     }
 
     @Test
-    public void shouldAggregateUserNameFromModifications() {
+    void shouldAggregateUserNameFromModifications() {
         String message = String.format("modified by %s", ModificationsMother.MOD_USER_WITH_HTML_CHAR);
         assertThat(buildCause.getBuildCauseMessage()).isEqualTo(message);
     }
 
     @Test
-    public void shouldReturnBuildCauseMessageForLegacyDependencyRevision() {
+    void shouldReturnBuildCauseMessageForLegacyDependencyRevision() {
         MaterialRevisions revisions = new MaterialRevisions();
         Modification modification = new Modification(new Date(), "pipelineName/10/stageName/1", "MOCK_LABEL-12", null);
         revisions.addRevision(new DependencyMaterial(cis("cruise"), cis("dev")), modification);
@@ -63,7 +63,7 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldReturnBuildCauseMessage() {
+    void shouldReturnBuildCauseMessage() {
         MaterialRevisions revisions = new MaterialRevisions();
         Modification modification = new Modification(new Date(), "pipelineName/123/stageName/1", "MOCK_LABEL-12", null);
         revisions.addRevision(new DependencyMaterial(cis("cruise"), cis("dev")), modification);
@@ -73,7 +73,7 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldAggreateUserCommentFromModifications() {
+    void shouldAggregateUserCommentFromModifications() {
         ModificationSummaries summaries = buildCause.toModificationSummaries();
         String message = summaries.getModification(0).getComment();
         String user = summaries.getModification(0).getUserName();
@@ -82,18 +82,18 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldDisplayNoModifications() {
+    void shouldDisplayNoModifications() {
         buildCause = BuildCause.createWithModifications(new MaterialRevisions(), "");
         assertThat(buildCause.getBuildCauseMessage()).isEqualTo("No modifications");
     }
 
     @Test
-    public void shouldSafelyGetBuildCausedBy() {
+    void shouldSafelyGetBuildCausedBy() {
         assertThat(BuildCause.createEmpty().getBuildCauseMessage()).isEqualTo("No modifications");
     }
 
     @Test
-    public void shouldGetBuildCausedByIfIsDependencyMaterial() {
+    void shouldGetBuildCausedByIfIsDependencyMaterial() {
         MaterialRevisions revisions = new MaterialRevisions();
         Modification modification = new Modification(new Date(), "pipelineName/10/stageName/1", "MOCK_LABEL-12", null);
         revisions.addRevision(new DependencyMaterial(cis("cruise"), cis("dev")), modification);
@@ -101,7 +101,7 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldBeInvalidWhenMaterialsFromBuildCauseAreDifferentFromConfigFile() {
+    void shouldBeInvalidWhenMaterialsFromBuildCauseAreDifferentFromConfigFile() {
         try {
             buildCause.assertMaterialsMatch(new MaterialConfigs(MaterialConfigsMother.hgMaterialConfig()));
             fail("The material from build cause was different from the one in the config");
@@ -110,19 +110,19 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldIncludeUserWhoForcedBuildInManualBuildCause() {
+    void shouldIncludeUserWhoForcedBuildInManualBuildCause() {
         BuildCause cause = BuildCause.createManualForced(null, new Username(cis("Joe Bloggs")));
         assertThat(cause.getBuildCauseMessage()).contains("Forced by Joe Bloggs");
     }
 
     @Test
-    public void shouldNotAllowNullUsername() {
+    void shouldNotAllowNullUsername() {
         BuildCause cause = BuildCause.createManualForced(MaterialRevisions.EMPTY, Username.ANONYMOUS);
         assertThat(cause.getBuildCauseMessage()).contains("Forced by anonymous");
     }
 
     @Test
-    public void shouldNotAllowCreationWithANullUsername() {
+    void shouldNotAllowCreationWithANullUsername() {
         try {
             BuildCause.createManualForced(null, null);
             Assertions.fail("Expected NullPointerException to be thrown");
@@ -132,7 +132,7 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldBeValidWithExternalMaterials() {
+    void shouldBeValidWithExternalMaterials() {
         SvnMaterial mainRepo = MaterialsMother.svnMaterial("mainRepo");
         MaterialRevisions revisions = new MaterialRevisions();
         revisions.addRevision(mainRepo, multipleModificationList());
@@ -143,7 +143,7 @@ public class ModificationBuildCauseTest {
     }
 
     @Test
-    public void shouldBeInvalidWhenMaterialsFromConfigAreNotInBuildCause() {
+    void shouldBeInvalidWhenMaterialsFromConfigAreNotInBuildCause() {
         SvnMaterial mainRepo = MaterialsMother.svnMaterial("mainRepo");
         SvnMaterial extRepo = MaterialsMother.svnMaterial("externalRepo");
 

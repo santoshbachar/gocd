@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PluggableTaskConsoleTest {
+class PluggableTaskConsoleTest {
 
     @Mock
     SafeOutputStreamConsumer safeOutputStreamConsumer;
@@ -43,12 +43,12 @@ public class PluggableTaskConsoleTest {
     private List<String> values = List.of("Twitter", "Facebook", "Mega Upload");
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         console = new PluggableTaskConsole(safeOutputStreamConsumer, StandardCharsets.UTF_8);
     }
 
     @Test
-    public void shouldPrintLineToPublisher() {
+    void shouldPrintLineToPublisher() {
         String line = "Test Line";
         doNothing().when(safeOutputStreamConsumer).stdOutput(line);
         console.printLine(line);
@@ -56,7 +56,7 @@ public class PluggableTaskConsoleTest {
     }
 
     @Test
-    public void shouldPrintEnvironmentVars() {
+    void shouldPrintEnvironmentVars() {
         Map<String, String> env = new HashMap<>();
         Console.SecureEnvVarSpecifier varSpecifier = mock(Console.SecureEnvVarSpecifier.class);
         for (int i = 0; i < keys.size(); i++) {
@@ -66,28 +66,28 @@ public class PluggableTaskConsoleTest {
         doNothing().when(safeOutputStreamConsumer).stdOutput("Environment variables: ");
         for (int i = 0; i < keys.size(); i++) {
             doNothing().when(safeOutputStreamConsumer).stdOutput(
-                    String.format("Name= %s  Value= %s", keys.get(i),
-                            i % 2 == 0 ? PluggableTaskConsole.MASK_VALUE : values.get(i)));
+                String.format("Name= %s  Value= %s", keys.get(i),
+                    i % 2 == 0 ? PluggableTaskConsole.MASK_VALUE : values.get(i)));
         }
         console.printEnvironment(env, varSpecifier);
         verify(safeOutputStreamConsumer).stdOutput("Environment variables: ");
         for (int i = 0; i < keys.size(); i++) {
             verify(varSpecifier).isSecure(keys.get(i));
             verify(safeOutputStreamConsumer).stdOutput(String.format("Name= %s  Value= %s", keys.get(i),
-                    i % 2 == 0 ? PluggableTaskConsole.MASK_VALUE : values.get(i)));
+                i % 2 == 0 ? PluggableTaskConsole.MASK_VALUE : values.get(i)));
         }
     }
 
     @Test
-    public void shouldReadOutputOfAGiveStream() {
+    void shouldReadOutputOfAGiveStream() {
         InputStream in = new ByteArrayInputStream("""
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit,\s
-                used do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\s
-                ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit\s
-                in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\s
-                 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui\s
-                officia deserunt mollit anim id est laborum.""".getBytes());
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit,\s
+            used do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\s
+            ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit\s
+            in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\s
+             Excepteur sint occaecat cupidatat non proident, sunt in culpa qui\s
+            officia deserunt mollit anim id est laborum.""".getBytes());
 
         doNothing().when(safeOutputStreamConsumer).stdOutput(anyString());
         console.readOutputOf(in);
@@ -95,15 +95,15 @@ public class PluggableTaskConsoleTest {
     }
 
     @Test
-    public void shouldReadErrorOfAGiveStream() {
+    void shouldReadErrorOfAGiveStream() {
         InputStream in = new ByteArrayInputStream("""
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit,\s
-                used do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\s
-                ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit\s
-                in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\s
-                 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui\s
-                officia deserunt mollit anim id est laborum.""".getBytes());
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit,\s
+            used do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi\s
+            ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit\s
+            in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\s
+             Excepteur sint occaecat cupidatat non proident, sunt in culpa qui\s
+            officia deserunt mollit anim id est laborum.""".getBytes());
 
         doNothing().when(safeOutputStreamConsumer).errOutput(anyString());
         console.readErrorOf(in);

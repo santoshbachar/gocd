@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JobResultTest {
+class JobResultTest {
 
     @Test
-    public void shouldConvertToCctrayStatus() {
+    void shouldConvertToCctrayStatus() {
         assertThat(JobResult.Passed.toCctrayStatus()).isEqualTo("Success");
         assertThat(JobResult.Failed.toCctrayStatus()).isEqualTo("Failure");
         assertThat(JobResult.Cancelled.toCctrayStatus()).isEqualTo("Failure");
@@ -31,7 +31,7 @@ public class JobResultTest {
 
 
     @Test
-    public void compatorShouldOrderBy_failed_passed_and_then_unknown() {
+    void comparatorShouldOrderBy_failed_passed_and_then_unknown() {
         assertThat(JobResult.JOB_RESULT_COMPARATOR.compare(JobResult.Unknown, JobResult.Failed)).isEqualTo(1);
         assertThat(JobResult.JOB_RESULT_COMPARATOR.compare(JobResult.Unknown, JobResult.Passed)).isEqualTo(-1);
         assertThat(JobResult.JOB_RESULT_COMPARATOR.compare(JobResult.Failed, JobResult.Passed)).isEqualTo(-1);

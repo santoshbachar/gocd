@@ -23,21 +23,21 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PluginTest {
+class PluginTest {
     private Plugin plugin;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         plugin = new Plugin("plugin-id", JsonHelper.toJson(Map.of("k1", "v1", "k2", "v2")));
     }
 
     @Test
-    public void shouldGetAllConfigurationKeys() {
+    void shouldGetAllConfigurationKeys() {
         assertThat(plugin.getAllConfigurationKeys()).containsExactly("k1", "k2");
     }
 
     @Test
-    public void shouldGetValueForConfigurationKey() {
+    void shouldGetValueForConfigurationKey() {
         assertThat(plugin.getConfigurationValue("k1")).isEqualTo("v1");
     }
 }

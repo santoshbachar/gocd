@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static com.thoughtworks.go.util.SystemUtil.currentWorkingDirectory;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AgentStatusReportTest {
+class AgentStatusReportTest {
     private AgentIdentifier agentIdentifier;
     private EnvironmentVariableContext environmentVariableContext;
     private GoArtifactManipulatorStub artifactManipulator;
@@ -33,7 +33,7 @@ public class AgentStatusReportTest {
     private AgentRuntimeInfo agentRuntimeInfo;
 
     @BeforeEach
-    public void before() {
+    void before() {
         agentIdentifier = new AgentIdentifier("localhost", "127.0.0.1", "uuid");
         environmentVariableContext = new EnvironmentVariableContext();
         artifactManipulator = new GoArtifactManipulatorStub();
@@ -42,35 +42,35 @@ public class AgentStatusReportTest {
     }
 
     @Test
-    public void shouldReportIdleWhenAgentRunningNoWork() {
+    void shouldReportIdleWhenAgentRunningNoWork() {
         NoWork work = new NoWork();
         work.doWork(environmentVariableContext, new AgentWorkContext(agentIdentifier, buildRepository, artifactManipulator, agentRuntimeInfo, null, null, null, null));
         assertThat(agentRuntimeInfo).isEqualTo(new AgentRuntimeInfo(agentIdentifier, AgentRuntimeStatus.Idle, currentWorkingDirectory(), "cookie"));
     }
 
     @Test
-    public void shouldReportIdleWhenAgentCancelledNoWork() {
+    void shouldReportIdleWhenAgentCancelledNoWork() {
         NoWork work = new NoWork();
         work.cancel(environmentVariableContext, agentRuntimeInfo);
         assertThat(agentRuntimeInfo).isEqualTo(new AgentRuntimeInfo(agentIdentifier, AgentRuntimeStatus.Idle, currentWorkingDirectory(), "cookie"));
     }
 
     @Test
-    public void shouldReportIdleWhenAgentRunningDeniedWork() {
+    void shouldReportIdleWhenAgentRunningDeniedWork() {
         Work work = new DeniedAgentWork("uuid");
         work.doWork(environmentVariableContext, new AgentWorkContext(agentIdentifier, buildRepository, artifactManipulator, agentRuntimeInfo, null, null, null, null));
         assertThat(agentRuntimeInfo).isEqualTo(new AgentRuntimeInfo(agentIdentifier, AgentRuntimeStatus.Idle, currentWorkingDirectory(), "cookie"));
     }
 
     @Test
-    public void shouldReportIdleWhenAgentCancelledDeniedWork() {
+    void shouldReportIdleWhenAgentCancelledDeniedWork() {
         Work work = new DeniedAgentWork("uuid");
         work.cancel(environmentVariableContext, agentRuntimeInfo);
         assertThat(agentRuntimeInfo).isEqualTo(new AgentRuntimeInfo(agentIdentifier, AgentRuntimeStatus.Idle, currentWorkingDirectory(), "cookie"));
     }
 
     @Test
-    public void shouldNotChangeWhenAgentRunningUnregisteredAgentWork() {
+    void shouldNotChangeWhenAgentRunningUnregisteredAgentWork() {
         Work work = new UnregisteredAgentWork("uuid");
         try {
             work.doWork(environmentVariableContext, new AgentWorkContext(agentIdentifier, buildRepository, artifactManipulator, agentRuntimeInfo, null, null, null, null));
@@ -80,7 +80,7 @@ public class AgentStatusReportTest {
     }
 
     @Test
-    public void shouldNotChangeIdleWhenAgentCancelledUnregisteredAgentWork() {
+    void shouldNotChangeIdleWhenAgentCancelledUnregisteredAgentWork() {
         Work work = new UnregisteredAgentWork("uuid");
         try {
             work.cancel(environmentVariableContext, agentRuntimeInfo);

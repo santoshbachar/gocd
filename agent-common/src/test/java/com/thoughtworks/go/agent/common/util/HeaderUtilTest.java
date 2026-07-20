@@ -25,9 +25,9 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HeaderUtilTest {
+class HeaderUtilTest {
     @Test
-    public void shouldGetExtraPropertiesFromHeader() {
+    void shouldGetExtraPropertiesFromHeader() {
         assertExtraPropertiesWithoutBase64(null, new HashMap<>());
         assertExtraPropertiesWithoutBase64("", new HashMap<>());
         assertExtraProperties("", new HashMap<>());
@@ -46,7 +46,7 @@ public class HeaderUtilTest {
     }
 
     @Test
-    public void shouldNotFailIfExtraPropertiesAreNotFormattedProperly() {
+    void shouldNotFailIfExtraPropertiesAreNotFormattedProperly() {
         assertExtraProperties("abc", new HashMap<>());
     }
 

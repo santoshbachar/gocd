@@ -19,22 +19,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PipelineIdentifierTest {
+class PipelineIdentifierTest {
 
     @Test
-    public void shouldUseCounterIfItExists() {
+    void shouldUseCounterIfItExists() {
         PipelineIdentifier identifier = new PipelineIdentifier("cruise", 1, "label-1");
         assertThat(identifier.pipelineLocator()).isEqualTo("cruise/1");
     }
 
     @Test
-    public void shouldUseLabelForDisplay() {
+    void shouldUseLabelForDisplay() {
         PipelineIdentifier identifier = new PipelineIdentifier("cruise", 1, "label-1");
         assertThat(identifier.pipelineLocatorForDisplay()).isEqualTo("cruise/label-1");
     }
 
     @Test
-    public void shouldReturnURN() {
+    void shouldReturnURN() {
         PipelineIdentifier identifier = new PipelineIdentifier("cruise", 1, "label-1");
         assertThat(identifier.asURN()).isEqualTo("urn:x-go.studios.thoughtworks.com:job-id:cruise:1");
     }

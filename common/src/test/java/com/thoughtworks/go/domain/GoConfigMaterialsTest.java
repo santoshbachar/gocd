@@ -36,10 +36,10 @@ import java.util.Set;
 import static com.thoughtworks.go.config.CaseInsensitiveString.cis;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoConfigMaterialsTest {
+class GoConfigMaterialsTest {
 
     @Test
-    public void shouldProvideSetOfSchedulableMaterials() {
+    void shouldProvideSetOfSchedulableMaterials() {
         SvnMaterialConfig svnMaterialConfig = MaterialConfigsMother.svnMaterialConfig("url", "svnDir", true);
         PipelineConfig pipeline1 = new PipelineConfig(cis("pipeline1"), new MaterialConfigs(svnMaterialConfig));
         CruiseConfig config = new BasicCruiseConfig(new BasicPipelineConfigs(pipeline1));
@@ -47,7 +47,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void shouldIncludeScmMaterialsFromManualPipelinesInSchedulableMaterials() {
+    void shouldIncludeScmMaterialsFromManualPipelinesInSchedulableMaterials() {
         PipelineConfig pipeline1 = pipelineWithManyMaterials(true);
 
         pipeline1.add(new StageConfig(cis("manual-stage"), new JobConfigs(), new Approval()));
@@ -56,7 +56,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void shouldNotIncludePackageMaterialsWithAutoUpdateFalse() {
+    void shouldNotIncludePackageMaterialsWithAutoUpdateFalse() {
         PipelineConfig pipeline1 = pipelineWithManyMaterials(false);
         pipeline1.addMaterialConfig(getPackageMaterialConfigWithAutoUpdateFalse());
         pipeline1.addMaterialConfig(getPackageMaterialConfigWithAutoUpdateTrue());
@@ -67,7 +67,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void shouldNotIncludePluggableSCMMaterialsWithAutoUpdateFalse() {
+    void shouldNotIncludePluggableSCMMaterialsWithAutoUpdateFalse() {
         PipelineConfig pipeline1 = pipelineWithManyMaterials(false);
         PluggableSCMMaterialConfig autoUpdateMaterialConfig = new PluggableSCMMaterialConfig(null, SCMMother.create("scm-id-1"), null, null, false);
         pipeline1.addMaterialConfig(autoUpdateMaterialConfig);
@@ -97,7 +97,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void uniqueMaterialForAutoPipelinesShouldNotReturnPackageMaterialsWithAutoUpdateFalse() {
+    void uniqueMaterialForAutoPipelinesShouldNotReturnPackageMaterialsWithAutoUpdateFalse() {
         PipelineConfig pipeline1 = pipelineWithManyMaterials(false);
         pipeline1.add(new StageConfig(cis("manual-stage"), new JobConfigs(), new Approval()));
         CruiseConfig config = new BasicCruiseConfig(new BasicPipelineConfigs(pipeline1));
@@ -116,7 +116,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void shouldIncludeDependencyMaterialsFromManualPipelinesInSchedulableMaterials() {
+    void shouldIncludeDependencyMaterialsFromManualPipelinesInSchedulableMaterials() {
         DependencyMaterialConfig dependencyMaterialConfig = MaterialConfigsMother.dependencyMaterialConfig();
         PipelineConfig pipeline1 = new PipelineConfig(cis("pipeline1"), new MaterialConfigs(dependencyMaterialConfig));
         pipeline1.add(new StageConfig(cis("manual-stage"), new JobConfigs(), new Approval()));
@@ -127,7 +127,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void shouldOnlyHaveOneCopyOfAMaterialIfOnlyTheFolderIsDifferent() {
+    void shouldOnlyHaveOneCopyOfAMaterialIfOnlyTheFolderIsDifferent() {
         SvnMaterialConfig svn = MaterialConfigsMother.svnMaterialConfig("url", "folder1", true);
         SvnMaterialConfig svnInDifferentFolder = MaterialConfigsMother.svnMaterialConfig("url", "folder2");
         PipelineConfig pipeline1 = new PipelineConfig(cis("pipeline1"), new MaterialConfigs(svn));
@@ -138,7 +138,7 @@ public class GoConfigMaterialsTest {
     }
 
     @Test
-    public void shouldHaveBothMaterialsIfTheTypeIsDifferent() {
+    void shouldHaveBothMaterialsIfTheTypeIsDifferent() {
         SvnMaterialConfig svn = MaterialConfigsMother.svnMaterialConfig("url", "folder1", true);
         HgMaterialConfig hg = MaterialConfigsMother.hgMaterialConfig("url", "folder2");
         PipelineConfig pipeline1 = new PipelineConfig(cis("pipeline1"), new MaterialConfigs(svn));

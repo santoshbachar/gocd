@@ -23,24 +23,24 @@ import static com.thoughtworks.go.config.CaseInsensitiveString.cis;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class BuildPlansTest {
+class BuildPlansTest {
 
     @Test
-    public void shouldFindBuildPlanByName() {
+    void shouldFindBuildPlanByName() {
         JobConfigs jobConfigs = new JobConfigs();
         jobConfigs.add(jobConfig("Test"));
         assertThat(jobConfigs.containsName(cis("Poo"))).isFalse();
     }
 
     @Test
-    public void shouldNotBombIfABuildPlanWithSameNameIsSetAgain() {
+    void shouldNotBombIfABuildPlanWithSameNameIsSetAgain() {
         JobConfigs jobConfigs = new JobConfigs();
         jobConfigs.add(jobConfig("Test"));
         jobConfigs.set(0, jobConfig("Test"));
     }
 
     @Test
-    public void shouldBombIfABuildPlanWithSameNameIsAdded() {
+    void shouldBombIfABuildPlanWithSameNameIsAdded() {
         JobConfigs jobConfigs = new JobConfigs();
         jobConfigs.add(jobConfig("Test"));
         try {
@@ -51,7 +51,7 @@ public class BuildPlansTest {
     }
 
     @Test
-    public void shouldBombIfABuildPlanWithSameNameWithDifferentCaseIsAdded() {
+    void shouldBombIfABuildPlanWithSameNameWithDifferentCaseIsAdded() {
         JobConfigs jobConfigs = new JobConfigs();
         jobConfigs.add(jobConfig("Test"));
         try {

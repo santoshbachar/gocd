@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Test;
 import static com.thoughtworks.go.config.RunIfConfig.PASSED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RunIfConfigsTest {
+class RunIfConfigsTest {
 
     @Test
-    public void shouldMatchWhenContainsCondition() {
+    void shouldMatchWhenContainsCondition() {
         RunIfConfigs configs = new RunIfConfigs(PASSED);
         assertThat(configs.match(RunIfConfig.fromJobResult(JobResult.Passed.toLowerCase()))).isTrue();
         assertThat(configs.match(RunIfConfig.fromJobResult(JobResult.Failed.toLowerCase()))).isFalse();
@@ -32,7 +32,7 @@ public class RunIfConfigsTest {
     }
 
     @Test
-    public void shouldMatchAnyWhenAnyIsDefined() {
+    void shouldMatchAnyWhenAnyIsDefined() {
         RunIfConfigs configs = new RunIfConfigs(RunIfConfig.ANY);
         assertThat(configs.match(RunIfConfig.fromJobResult(JobResult.Passed.toLowerCase()))).isTrue();
         assertThat(configs.match(RunIfConfig.fromJobResult(JobResult.Failed.toLowerCase()))).isTrue();
@@ -40,7 +40,7 @@ public class RunIfConfigsTest {
     }
 
     @Test
-    public void testOnlyMatchPassedWhenNoneIsDefined() {
+    void testOnlyMatchPassedWhenNoneIsDefined() {
         RunIfConfigs configs = new RunIfConfigs();
         assertThat(configs.match(RunIfConfig.fromJobResult(JobResult.Passed.toLowerCase()))).isTrue();
         assertThat(configs.match(RunIfConfig.fromJobResult(JobResult.Failed.toLowerCase()))).isFalse();
@@ -48,7 +48,7 @@ public class RunIfConfigsTest {
     }
 
     @Test
-    public void shouldAddErrorsToErrorCollectionOfTheCollectionAsWellAsEachRunIfConfig() {
+    void shouldAddErrorsToErrorCollectionOfTheCollectionAsWellAsEachRunIfConfig() {
         RunIfConfigs configs = new RunIfConfigs();
         RunIfConfig config = new RunIfConfig("passed");
         config.addError("status", "some error");

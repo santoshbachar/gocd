@@ -28,7 +28,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ArtifactMd5ChecksumsTest {
+class ArtifactMd5ChecksumsTest {
 
     private File file;
 
@@ -36,12 +36,12 @@ public class ArtifactMd5ChecksumsTest {
     public File temporaryFolder;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         file = File.createTempFile("test", null, temporaryFolder);
     }
 
     @Test
-    public void shouldReturnTrueIfTheChecksumFileContainsAGivenPath() {
+    void shouldReturnTrueIfTheChecksumFileContainsAGivenPath() {
         Properties properties = new Properties();
         properties.setProperty("first/path", "md5");
         ArtifactMd5Checksums artifactMd5Checksums = new ArtifactMd5Checksums(properties);
@@ -49,7 +49,7 @@ public class ArtifactMd5ChecksumsTest {
     }
 
     @Test
-    public void shouldReturnNullIfTheChecksumFileDoesNotContainsAGivenPath() {
+    void shouldReturnNullIfTheChecksumFileDoesNotContainsAGivenPath() {
         Properties properties = new Properties();
         properties.setProperty("first/path", "md5");
         ArtifactMd5Checksums artifactMd5Checksums = new ArtifactMd5Checksums(properties);
@@ -57,14 +57,14 @@ public class ArtifactMd5ChecksumsTest {
     }
 
     @Test
-    public void shouldLoadThePropertiesFromTheGivenFile() throws IOException {
+    void shouldLoadThePropertiesFromTheGivenFile() throws IOException {
         Files.writeString(file.toPath(), "first/path:md5=", UTF_8);
         ArtifactMd5Checksums artifactMd5Checksums = new ArtifactMd5Checksums(file);
         assertThat(artifactMd5Checksums.md5For("first/path")).isEqualTo("md5=");
     }
 
     @Test
-    public void shouldThrowAnExceptionIfTheLoadingFails() {
+    void shouldThrowAnExceptionIfTheLoadingFails() {
         try {
             file.delete();
             new ArtifactMd5Checksums(file);

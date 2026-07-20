@@ -40,7 +40,7 @@ import static java.net.HttpURLConnection.HTTP_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class FetchArtifactBuilderTest {
+class FetchArtifactBuilderTest {
     private final List<File> toClean = new ArrayList<>();
 
     private File zip;
@@ -51,7 +51,7 @@ public class FetchArtifactBuilderTest {
     private DownloadAction downloadAction;
 
     @BeforeEach
-    public void setUp(@TempDir Path tempDir) throws Exception {
+    void setUp(@TempDir Path tempDir) throws Exception {
         createZipArtifactIn(tempDir);
 
         dest = new File("dest");
@@ -76,7 +76,7 @@ public class FetchArtifactBuilderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         new SystemEnvironment().clearProperty(SystemEnvironment.SERVICE_URL.propertyName());
         for (File fileToClean : toClean) {
             FileUtils.deleteQuietly(fileToClean);
@@ -84,12 +84,12 @@ public class FetchArtifactBuilderTest {
     }
 
     @Test
-    public void shouldUnzipWhenFetchingFolder() throws Exception {
+    void shouldUnzipWhenFetchingFolder() throws Exception {
         ChecksumFileHandler checksumFileHandler = mock(ChecksumFileHandler.class);
         when(checksumFileHandler.handleResult(HTTP_OK, publisher)).thenReturn(true);
 
         File destOnAgent = new File("pipelines/cruise/", dest.getPath());
-        FetchArtifactBuilder builder = getBuilder(new JobIdentifier("cruise", -10, "1", "dev", "1", "windows", 1L), "log", dest.getPath(), new DirHandler("log",destOnAgent), checksumFileHandler);
+        FetchArtifactBuilder builder = getBuilder(new JobIdentifier("cruise", -10, "1", "dev", "1", "windows", 1L), "log", dest.getPath(), new DirHandler("log", destOnAgent), checksumFileHandler);
 
         builder.fetch(new DownloadAction(new StubFetchZipWorkDownloader(), publisher, clock));
 
@@ -97,7 +97,7 @@ public class FetchArtifactBuilderTest {
     }
 
     @Test
-    public void shouldSaveFileWhenFetchingFile() throws Exception {
+    void shouldSaveFileWhenFetchingFile() throws Exception {
         ChecksumFileHandler checksumFileHandler = mock(ChecksumFileHandler.class);
         when(checksumFileHandler.handleResult(HTTP_OK, publisher)).thenReturn(true);
 
@@ -116,15 +116,15 @@ public class FetchArtifactBuilderTest {
     }
 
     @Test
-    public void shouldReturnURLWithoutSHA1WhenFileDoesNotExist() throws Exception {
+    void shouldReturnURLWithoutSHA1WhenFileDoesNotExist() throws Exception {
         String src = "cruise-output/console.log";
         File destOnAgent = new File("pipelines" + '/' + "cruise" + '/' + dest);
         File consolelog = new File(destOnAgent, "console.log");
         consolelog.delete();
 
         FetchArtifactBuilder builder = getBuilder(new JobIdentifier("foo", -1, "label-1", "dev", "1", "linux", 1L),
-                src, "lib/a.jar",
-                new FileHandler(consolelog, getSrc()), checksumFileHandler);
+            src, "lib/a.jar",
+            new FileHandler(consolelog, getSrc()), checksumFileHandler);
 
         when(checksumFileHandler.url("foo/label-1/dev/1/linux")).thenReturn("http://foo.bar:8153/go/files/foo/label-1/dev/1/linux/cruise-output/md5.checksum");
 
@@ -139,7 +139,7 @@ public class FetchArtifactBuilderTest {
     }
 
     @Test
-    public void shouldReturnURLWithSHA1WhenFileExists() throws Exception {
+    void shouldReturnURLWithSHA1WhenFileExists() throws Exception {
         String src = "cruise-output/console.log";
         File destOnAgent = new File("pipelines" + '/' + "cruise" + '/' + dest);
         File consolelog = new File(destOnAgent, "console.log");
@@ -148,8 +148,8 @@ public class FetchArtifactBuilderTest {
         toClean.add(destOnAgent);
 
         FetchArtifactBuilder builder = getBuilder(new JobIdentifier("foo", -1, "label-1", "dev", "1", "linux", 1L),
-                src, "lib/a.jar",
-                new FileHandler(consolelog, getSrc()), checksumFileHandler);
+            src, "lib/a.jar",
+            new FileHandler(consolelog, getSrc()), checksumFileHandler);
 
         when(checksumFileHandler.url("foo/label-1/dev/1/linux")).thenReturn("http://foo.bar:8153/go/files/foo/label-1/dev/1/linux/cruise-output/md5.checksum");
 
@@ -164,13 +164,13 @@ public class FetchArtifactBuilderTest {
     }
 
     @Test
-    public void shouldReturnURLEndsWithDotZipWhenRequestingFolder() throws Exception {
+    void shouldReturnURLEndsWithDotZipWhenRequestingFolder() throws Exception {
         String src = "cruise-output";
         File destOnAgent = new File("pipelines/cruise/", dest.getPath());
 
         FetchArtifactBuilder builder = getBuilder(new JobIdentifier("foo", -1, "label-1", "dev", "1", "linux", 1L),
-                src, "lib/a.jar",
-                new DirHandler(src, destOnAgent), checksumFileHandler);
+            src, "lib/a.jar",
+            new DirHandler(src, destOnAgent), checksumFileHandler);
 
         when(checksumFileHandler.url("foo/label-1/dev/1/linux")).thenReturn("http://foo.bar:8153/go/files/foo/label-1/dev/1/linux/cruise-output/md5.checksum");
 
@@ -186,7 +186,7 @@ public class FetchArtifactBuilderTest {
 
 
     @Test
-    public void shouldValidateChecksumOnArtifact() throws Exception {
+    void shouldValidateChecksumOnArtifact() throws Exception {
         when(checksumFileHandler.url("cruise/10/dev/1/windows")).thenReturn("http://foo.bar:8153/go/files/cruise/10/dev/1/windows/cruise-output/md5.checksum");
 
         FetchArtifactBuilder builder = getBuilder(new JobIdentifier("cruise", 10, "1", "dev", "1", "windows", 1L), "log", dest.getPath(), mock(FetchHandler.class), checksumFileHandler);
@@ -196,7 +196,7 @@ public class FetchArtifactBuilderTest {
     }
 
     @Test
-    public void shouldMakeTheFetchHandlerUseTheArtifactMd5Checksum() throws Exception {
+    void shouldMakeTheFetchHandlerUseTheArtifactMd5Checksum() throws Exception {
         ArtifactMd5Checksums artifactMd5Checksums = mock(ArtifactMd5Checksums.class);
 
         when(checksumFileHandler.url("cruise/10/dev/1/windows")).thenReturn("http://foo.bar:8153/go/files/cruise/10/dev/1/windows/cruise-output/md5.checksum");

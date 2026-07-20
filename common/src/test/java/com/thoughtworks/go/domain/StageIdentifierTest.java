@@ -20,22 +20,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StageIdentifierTest {
+class StageIdentifierTest {
 
     @Test
-    public void shouldContainCounterIfStageHasRerun() {
+    void shouldContainCounterIfStageHasRerun() {
         StageIdentifier identifier = new StageIdentifier("cruise", 0, "label", "dev", "2");
         assertThat(identifier.ccTrayLastBuildLabel()).isEqualTo("label :: 2");
     }
 
     @Test
-    public void shouldNotContainCounterForFirstRun() {
+    void shouldNotContainCounterForFirstRun() {
         StageIdentifier identifier = new StageIdentifier("cruise", 0, "label", "dev", "1");
         assertThat(identifier.ccTrayLastBuildLabel()).isEqualTo("label");
     }
 
     @Test
-    public void shouldConstructFromStageLocator() {
+    void shouldConstructFromStageLocator() {
         StageIdentifier identifier = new StageIdentifier("pipeline-name/10/stage-name/7");
         assertThat(identifier.getPipelineName()).isEqualTo("pipeline-name");
         assertThat(identifier.getStageName()).isEqualTo("stage-name");
@@ -44,7 +44,7 @@ public class StageIdentifierTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfStageCounterIsNotNumber() {
+    void shouldThrowExceptionIfStageCounterIsNotNumber() {
         StageIdentifier identifier = new StageIdentifier("cruise", 0, "label", "dev", "");
         try {
             identifier.ccTrayLastBuildLabel();
@@ -55,7 +55,7 @@ public class StageIdentifierTest {
     }
 
     @Test
-    public void pipelineStagesWithSameCountersAndDifferentlabelShouldBeEqual() {
+    void pipelineStagesWithSameCountersAndDifferentLabelShouldBeEqual() {
         StageIdentifier stage1 = new StageIdentifier("blahPipeline", 1, "blahLabel", "blahStage", "1");
         StageIdentifier stage2 = new StageIdentifier("blahPipeline", 1, "fooLabel", "blahStage", "1");
         StageIdentifier stage3 = new StageIdentifier("blahPipeline", 1, "blahStage", "1");

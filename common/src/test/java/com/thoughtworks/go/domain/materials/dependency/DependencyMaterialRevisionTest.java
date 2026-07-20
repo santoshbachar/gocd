@@ -26,23 +26,23 @@ import java.util.Map;
 import static com.thoughtworks.go.config.CaseInsensitiveString.cis;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DependencyMaterialRevisionTest {
+class DependencyMaterialRevisionTest {
 
     @Test
-    public void shouldRenderPipelineLabelToRenderer() {
+    void shouldRenderPipelineLabelToRenderer() {
         DependencyMaterialRevision revision = DependencyMaterialRevision.create("pipeline", 50, "1.0.123", "stage", 1);
         assertThat(revision.getRevisionUrl()).isEqualTo("pipelines/pipeline/50/stage/1");
     }
 
     @Test
-    public void shouldReturnRevisionForSavingIntoDatabase() {
+    void shouldReturnRevisionForSavingIntoDatabase() {
         DependencyMaterialRevision revision = DependencyMaterialRevision.create("pipeline", 2, "1.0.123", "stage", 1);
         assertThat(revision.getRevision()).isEqualTo("pipeline/2/stage/1");
         assertThat(revision.getPipelineLabel()).isEqualTo("1.0.123");
     }
 
     @Test
-    public void shouldConvertToTheCounterBasedRevision() {
+    void shouldConvertToTheCounterBasedRevision() {
         DependencyMaterialRevision materialRevision = DependencyMaterialRevision.create("pipeline", 10, "1.2.3", "stage", 4);
 
         MaterialRevision withRevision = materialRevision.convert(new DependencyMaterial(cis("pipeline"), cis("stage")), new Date());
@@ -52,7 +52,7 @@ public class DependencyMaterialRevisionTest {
     }
 
     @Test
-    public void shouldAddPipelineLabelAsRevisionForMaterial() {
+    void shouldAddPipelineLabelAsRevisionForMaterial() {
         DependencyMaterialRevision materialRevision = DependencyMaterialRevision.create("pipeline", 10, "foo-1.2.3", "stage", 4);
         Map<String, String> revMap = new HashMap<>();
         materialRevision.putRevision(revMap);

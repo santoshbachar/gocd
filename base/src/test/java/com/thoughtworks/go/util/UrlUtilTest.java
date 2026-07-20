@@ -29,7 +29,7 @@ class UrlUtilTest {
     }
 
     @Test
-    public void shouldJoinPathPartsPreEncoded() {
+    void shouldJoinPathPartsPreEncoded() {
         assertThat(UrlUtil.joinPathPartsPreEncoded("a", "b")).isEqualTo("a/b");
         assertThat(UrlUtil.joinPathPartsPreEncoded("a", "/b")).isEqualTo("a/b");
         assertThat(UrlUtil.joinPathPartsPreEncoded("a/", "b")).isEqualTo("a/b");

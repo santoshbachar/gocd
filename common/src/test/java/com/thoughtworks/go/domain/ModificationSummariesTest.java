@@ -20,16 +20,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ModificationSummariesTest {
+class ModificationSummariesTest {
     @Test
-    public void shouldGetLatestRevisionGivenMultipleRevisions() {
+    void shouldGetLatestRevisionGivenMultipleRevisions() {
         ModificationSummaries summaries = new ModificationSummaries(ModificationsMother.multipleModifications());
         String latest = summaries.latestRevision();
         assertThat(latest).isEqualTo(ModificationsMother.currentRevision());
     }
 
     @Test
-    public void shouldHandleEmptyRevisions() {
+    void shouldHandleEmptyRevisions() {
         ModificationSummaries summaries = new ModificationSummaries();
         String latest = summaries.latestRevision();
         assertThat(latest).isEmpty();

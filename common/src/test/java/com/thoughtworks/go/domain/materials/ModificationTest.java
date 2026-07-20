@@ -30,10 +30,10 @@ import java.util.UUID;
 import static com.thoughtworks.go.domain.materials.Modification.ANONYMOUS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ModificationTest {
+class ModificationTest {
 
     @Test
-    public void shouldReturnAnonymousWhenUserNameIsEmpty() {
+    void shouldReturnAnonymousWhenUserNameIsEmpty() {
         Modification modification = new Modification("", "comment", null, null, null);
         assertThat(modification.getUserDisplayName()).isEqualTo(ANONYMOUS);
         modification.setUserName("");
@@ -43,20 +43,20 @@ public class ModificationTest {
     }
 
     @Test
-    public void shouldAllowAdditionalData() {
+    void shouldAllowAdditionalData() {
         String expected = "some additional data";
         Modification modification = new Modification("loser", "", null, new Date(), "rev-123", expected);
         assertThat(modification.getAdditionalData()).isEqualTo(expected);
     }
 
     @Test
-    public void shouldReturnUserNameWhenUserNameIsNotEmpty() {
+    void shouldReturnUserNameWhenUserNameIsNotEmpty() {
         Modification modification = new Modification("jack", "", null, null, null);
         assertThat(modification.getUserDisplayName()).isEqualTo("jack");
     }
 
     @Test
-    public void shouldConsiderPipelineLabelForEqualsAndHashcode() {
+    void shouldConsiderPipelineLabelForEqualsAndHashcode() {
         Date date = new Date();
         Modification modification = new Modification("user", "comment", "foo@bar.com", date, "15");
         Modification anotherModificationWithoutLabel = new Modification("user", "comment", "foo@bar.com", date, "15");
@@ -69,7 +69,7 @@ public class ModificationTest {
     }
 
     @Test
-    public void shouldSerializeAndUnserializeAllAttributes() throws IOException, ClassNotFoundException {
+    void shouldSerializeAndUnserializeAllAttributes() throws IOException, ClassNotFoundException {
         Map<String, String> additionalData = new HashMap<>();
         additionalData.put("foo", "bar");
         Modification modification = new Modification("user", "comment", "foo@bar.com", new Date(), "pipe/1/stage/2", JsonHelper.toJsonExposeOnly(additionalData));
@@ -87,7 +87,7 @@ public class ModificationTest {
     }
 
     @Test
-    public void shouldCopyConstructor() {
+    void shouldCopyConstructor() {
         Modification modification = new Modification("user", "comment", "foo@bar.com", new Date(), "pipe/1/stage/2");
         Map<String, String> additionalData = new HashMap<>();
         additionalData.put("a1", "v1");

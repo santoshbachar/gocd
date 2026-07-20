@@ -31,10 +31,10 @@ import static com.thoughtworks.go.helper.ModificationsMother.oneModifiedFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class BuildCauseTest {
+class BuildCauseTest {
 
     @Test
-    public void shouldReturnTrimBuildCauseIfRevisionIsLongerThan12() {
+    void shouldReturnTrimBuildCauseIfRevisionIsLongerThan12() {
         ModificationSummaries summaries1 = new ModificationSummaries();
         summaries1.visit(
             new Modification(null, "comment1", null, null, "This could be a long Hg Revision Number"));
@@ -42,13 +42,13 @@ public class BuildCauseTest {
     }
 
     @Test
-    public void differentBuildCausesShouldNotBeTheSame() {
+    void differentBuildCausesShouldNotBeTheSame() {
         assertThat(BuildCause.createEmpty().isSameAs(BuildCause.createManualForced())).isFalse();
         assertThat(BuildCause.createManualForced().isSameAs(BuildCause.createEmpty())).isFalse();
     }
 
     @Test
-    public void sameBuildCausesShouldBeSame() {
+    void sameBuildCausesShouldBeSame() {
         MaterialRevisions first = new MaterialRevisions(
             new MaterialRevision(MaterialsMother.svnMaterial(), oneModifiedFile("revision1"))
         );
@@ -59,7 +59,7 @@ public class BuildCauseTest {
     }
 
     @Test
-    public void shouldSetBuildTriggerOnUpdatingMaterialRevisions() {
+    void shouldSetBuildTriggerOnUpdatingMaterialRevisions() {
         MaterialRevisions first = new MaterialRevisions(
             new MaterialRevision(MaterialsMother.svnMaterial(), oneModifiedFile("revision1"))
         );
@@ -69,7 +69,7 @@ public class BuildCauseTest {
     }
 
     @Test
-    public void shouldNotChangeBuildTriggerForForcedBuildCauseWhenUpdatingMaterialRevisions() {
+    void shouldNotChangeBuildTriggerForForcedBuildCauseWhenUpdatingMaterialRevisions() {
         MaterialRevisions first = new MaterialRevisions(
             new MaterialRevision(MaterialsMother.svnMaterial(), oneModifiedFile("revision1"))
         );
@@ -79,7 +79,7 @@ public class BuildCauseTest {
     }
 
     @Test
-    public void shouldNotThrowWhenMaterialAndConfigOriginRevisionDontMatch_WhenManualTrigger() {
+    void shouldNotThrowWhenMaterialAndConfigOriginRevisionDontMatch_WhenManualTrigger() {
         SvnMaterial material = MaterialsMother.svnMaterial();
         MaterialConfig materialConfig = material.config();
 
@@ -98,7 +98,7 @@ public class BuildCauseTest {
     }
 
     @Test
-    public void shouldThrowWhenMaterialAndConfigOriginRevisionDontMatch_WhenAutoTrigger() {
+    void shouldThrowWhenMaterialAndConfigOriginRevisionDontMatch_WhenAutoTrigger() {
         SvnMaterial material = MaterialsMother.svnMaterial();
         MaterialConfig materialConfig = material.config();
 
@@ -119,7 +119,7 @@ public class BuildCauseTest {
     }
 
     @Test
-    public void shouldNotThrowWhenMaterialAndConfigOriginRevisionMatch_WhenAutoTrigger() {
+    void shouldNotThrowWhenMaterialAndConfigOriginRevisionMatch_WhenAutoTrigger() {
         SvnMaterial material = MaterialsMother.svnMaterial();
         MaterialConfig materialConfig = material.config();
 

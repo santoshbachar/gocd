@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AgentHTTPClientControllerTest {
+class AgentHTTPClientControllerTest {
     @Mock
     private RemotingClient loopServer;
     @Mock
@@ -207,7 +207,7 @@ public class AgentHTTPClientControllerTest {
             subprocessLogger,
             systemEnvironment,
             pluginManager,
-                scmExtension,
+            scmExtension,
             taskExtension,
             artifactExtension, null, null, pluginJarLocationMonitor);
     }

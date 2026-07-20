@@ -33,7 +33,7 @@ import static com.thoughtworks.go.agent.testhelper.FakeGoServer.TestResource.TES
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JarUtilTest {
+class JarUtilTest {
 
     private static final String PATH_WITH_HASHES = "#hashes#in#path";
 
@@ -41,24 +41,24 @@ public class JarUtilTest {
     public File temporaryFolder;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         TEST_AGENT.copyTo(new File(PATH_WITH_HASHES, "test-agent.jar"));
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         Files.deleteIfExists(new File(PATH_WITH_HASHES, "test-agent.jar").toPath());
         Files.deleteIfExists(Path.of(PATH_WITH_HASHES));
     }
 
     @Test
-    public void shouldGetManifestKey() {
+    void shouldGetManifestKey() {
         String manifestKey = JarUtil.getManifestKey(new File(PATH_WITH_HASHES, "test-agent.jar"), "Go-Agent-Bootstrap-Class");
         assertThat(manifestKey).isEqualTo("com.thoughtworks.go.HelloWorldStreamWriter");
     }
 
     @Test
-    public void shouldExtractJars() throws Exception {
+    void shouldExtractJars() throws Exception {
         File sourceFile = new File(PATH_WITH_HASHES, "test-agent.jar");
         Set<File> files = new HashSet<>(JarUtil.extractFilesInLibDirAndReturnFiles(sourceFile, jarEntry -> jarEntry.getName().endsWith(".class"), temporaryFolder));
 

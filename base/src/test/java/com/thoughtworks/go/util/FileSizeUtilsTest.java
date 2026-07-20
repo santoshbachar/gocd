@@ -19,48 +19,48 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FileSizeUtilsTest {
+class FileSizeUtilsTest {
 
     @Test
-    public void shouldConvertBytes() {
+    void shouldConvertBytes() {
         assertThat(FileSizeUtils.byteCountToDisplaySize(1023)).isEqualTo("1023 bytes");
     }
 
     @Test
-    public void shouldConvertBytesToKilo() {
+    void shouldConvertBytesToKilo() {
         assertThat(FileSizeUtils.byteCountToDisplaySize(1024)).isEqualTo("1.0 KB");
         assertThat(FileSizeUtils.byteCountToDisplaySize(1024 + 512)).isEqualTo("1.5 KB");
     }
 
     @Test
-    public void shouldOnlyKeepOneDecimal() {
+    void shouldOnlyKeepOneDecimal() {
         assertThat(FileSizeUtils.byteCountToDisplaySize(1024 + 512 + 256)).isEqualTo("1.8 KB");
     }
 
     @Test
-    public void shouldConvertBytesToMega() {
+    void shouldConvertBytesToMega() {
         assertThat(FileSizeUtils.byteCountToDisplaySize(1024 * 1024)).isEqualTo("1.0 MB");
     }
 
     @Test
-    public void shouldConvertBytesToMegaForFloat() {
+    void shouldConvertBytesToMegaForFloat() {
         assertThat(FileSizeUtils.byteCountToDisplaySize(1024 * 1024 + 512 * 1024)).isEqualTo("1.5 MB");
     }
 
     @Test
-    public void shouldConvertBytesToGiga() {
+    void shouldConvertBytesToGiga() {
         long twoGiga = 2L * 1024 * 1024 * 1024 + 512 * 1024 * 1024;
         assertThat(FileSizeUtils.byteCountToDisplaySize(twoGiga)).isEqualTo("2.5 GB");
     }
 
     @Test
-    public void shouldConvertBytesToTB() {
+    void shouldConvertBytesToTB() {
         long twoGiga = 2L * 1024 * 1024 * 1024 * 1024 + 512L * 1024 * 1024 * 1024;
         assertThat(FileSizeUtils.byteCountToDisplaySize(twoGiga)).isEqualTo("2.5 TB");
     }
 
     @Test
-    public void shouldConvertBytesToPB() {
+    void shouldConvertBytesToPB() {
         long twoGiga = 2L * 1024 * 1024 * 1024 * 1024 * 1024 + 512L * 1024 * 1024 * 1024 * 1024;
         assertThat(FileSizeUtils.byteCountToDisplaySize(twoGiga)).isEqualTo("2.5 PB");
     }

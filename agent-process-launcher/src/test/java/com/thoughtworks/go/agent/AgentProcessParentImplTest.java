@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(FakeGoServerExtension.class)
-public class AgentProcessParentImplTest {
+class AgentProcessParentImplTest {
 
     @GoTestResource
     public FakeGoServer server;
@@ -54,17 +54,17 @@ public class AgentProcessParentImplTest {
     private final Path stdoutLog = Path.of("logs", AgentProcessParentImpl.GO_AGENT_STDOUT_LOG);
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         System.setProperty("sleep.for.download", "10");
     }
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         cleanup();
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         System.clearProperty("sleep.for.download");
         Files.deleteIfExists(stdoutLog);
         Files.deleteIfExists(stderrLog);
@@ -80,7 +80,7 @@ public class AgentProcessParentImplTest {
     }
 
     @Test
-    public void shouldStartSubprocessWithCommandLine() throws InterruptedException {
+    void shouldStartSubprocessWithCommandLine() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         String expectedAgentMd5 = TEST_AGENT.getMd5();
         String expectedAgentPluginsMd5 = TEST_AGENT_PLUGINS.getMd5();
@@ -90,24 +90,24 @@ public class AgentProcessParentImplTest {
         assertThat(returnCode).isEqualTo(42);
         assertThat(cmd).containsExactly(
             getProperty("java.home") + FileSystems.getDefault().getSeparator() + "bin" + FileSystems.getDefault().getSeparator() + "java",
-                "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
-                "-Dagent.binary.md5=" + expectedAgentMd5,
-                "-Dagent.launcher.md5=bar",
-                "-Dagent.tfs.md5=" + expectedTfsMd5,
-                "-Dagent.bootstrapper.version=UNKNOWN",
-                "-jar",
-                "agent.jar",
-                "-serverUrl",
-                "http://localhost:" + server.getPort() + "/go/",
-                "-sslVerificationMode",
-                "NONE",
-                "-rootCertFile",
-                new File("/path/to/cert.pem").getAbsolutePath()
+            "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
+            "-Dagent.binary.md5=" + expectedAgentMd5,
+            "-Dagent.launcher.md5=bar",
+            "-Dagent.tfs.md5=" + expectedTfsMd5,
+            "-Dagent.bootstrapper.version=UNKNOWN",
+            "-jar",
+            "agent.jar",
+            "-serverUrl",
+            "http://localhost:" + server.getPort() + "/go/",
+            "-sslVerificationMode",
+            "NONE",
+            "-rootCertFile",
+            new File("/path/to/cert.pem").getAbsolutePath()
         );
     }
 
     @Test
-    public void shouldAddBootstrapperVersionAsPropertyIfFoundInContext() throws InterruptedException {
+    void shouldAddBootstrapperVersionAsPropertyIfFoundInContext() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         String expectedAgentMd5 = TEST_AGENT.getMd5();
         String expectedAgentPluginsMd5 = TEST_AGENT_PLUGINS.getMd5();
@@ -121,24 +121,24 @@ public class AgentProcessParentImplTest {
         assertThat(returnCode).isEqualTo(42);
         assertThat(cmd).containsExactly(
             getProperty("java.home") + FileSystems.getDefault().getSeparator() + "bin" + FileSystems.getDefault().getSeparator() + "java",
-                "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
-                "-Dagent.binary.md5=" + expectedAgentMd5,
-                "-Dagent.launcher.md5=bar",
-                "-Dagent.tfs.md5=" + expectedTfsMd5,
-                "-Dagent.bootstrapper.version=20.3.0-1234",
-                "-jar",
-                "agent.jar",
-                "-serverUrl",
-                "http://localhost:" + server.getPort() + "/go/",
-                "-sslVerificationMode",
-                "NONE",
-                "-rootCertFile",
-                new File("/path/to/cert.pem").getAbsolutePath()
+            "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
+            "-Dagent.binary.md5=" + expectedAgentMd5,
+            "-Dagent.launcher.md5=bar",
+            "-Dagent.tfs.md5=" + expectedTfsMd5,
+            "-Dagent.bootstrapper.version=20.3.0-1234",
+            "-jar",
+            "agent.jar",
+            "-serverUrl",
+            "http://localhost:" + server.getPort() + "/go/",
+            "-sslVerificationMode",
+            "NONE",
+            "-rootCertFile",
+            new File("/path/to/cert.pem").getAbsolutePath()
         );
     }
 
     @Test
-    public void shouldAddAnyExtraPropertiesFoundToTheAgentInvocation() throws InterruptedException {
+    void shouldAddAnyExtraPropertiesFoundToTheAgentInvocation() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         String expectedAgentMd5 = TEST_AGENT.getMd5();
         String expectedAgentPluginsMd5 = TEST_AGENT_PLUGINS.getMd5();
@@ -151,26 +151,26 @@ public class AgentProcessParentImplTest {
         assertThat(returnCode).isEqualTo(42);
         assertThat(cmd).containsExactly(
             getProperty("java.home") + FileSystems.getDefault().getSeparator() + "bin" + FileSystems.getDefault().getSeparator() + "java",
-                "-Dextra.property=value1 with space",
-                "-Dextra property with space=value2 with space",
-                "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
-                "-Dagent.binary.md5=" + expectedAgentMd5,
-                "-Dagent.launcher.md5=bar",
-                "-Dagent.tfs.md5=" + expectedTfsMd5,
-                "-Dagent.bootstrapper.version=UNKNOWN",
-                "-jar",
-                "agent.jar",
-                "-serverUrl",
-                "http://localhost:" + server.getPort() + "/go/",
-                "-sslVerificationMode",
-                "NONE",
-                "-rootCertFile",
-                new File("/path/to/cert.pem").getAbsolutePath()
+            "-Dextra.property=value1 with space",
+            "-Dextra property with space=value2 with space",
+            "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
+            "-Dagent.binary.md5=" + expectedAgentMd5,
+            "-Dagent.launcher.md5=bar",
+            "-Dagent.tfs.md5=" + expectedTfsMd5,
+            "-Dagent.bootstrapper.version=UNKNOWN",
+            "-jar",
+            "agent.jar",
+            "-serverUrl",
+            "http://localhost:" + server.getPort() + "/go/",
+            "-sslVerificationMode",
+            "NONE",
+            "-rootCertFile",
+            new File("/path/to/cert.pem").getAbsolutePath()
         );
     }
 
     @Test
-    public void shouldAddSSLConfigurationIfProvided() throws InterruptedException {
+    void shouldAddSSLConfigurationIfProvided() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         String expectedAgentMd5 = TEST_AGENT.getMd5();
         String expectedAgentPluginsMd5 = TEST_AGENT_PLUGINS.getMd5();
@@ -187,25 +187,25 @@ public class AgentProcessParentImplTest {
         assertThat(returnCode).isEqualTo(42);
         assertThat(cmd).containsExactly(
             getProperty("java.home") + FileSystems.getDefault().getSeparator() + "bin" + FileSystems.getDefault().getSeparator() + "java",
-                "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
-                "-Dagent.binary.md5=" + expectedAgentMd5,
-                "-Dagent.launcher.md5=bar",
-                "-Dagent.tfs.md5=" + expectedTfsMd5,
-                "-Dagent.bootstrapper.version=UNKNOWN",
-                "-jar",
-                "agent.jar",
-                "-serverUrl",
-                "http://localhost:" + server.getPort() + "/go/",
-                "-sslVerificationMode",
-                "NONE",
-                "-rootCertFile",
-                new File("/path/to/cert.pem").getAbsolutePath(),
-                "-sslCertificateFile",
-                new File("/path/to/ssl_certificate.pem").getAbsolutePath(),
-                "-sslPrivateKeyFile",
-                new File("/path/to/private.key").getAbsolutePath(),
-                "-sslPrivateKeyPassphraseFile",
-                new File("/path/to/private_key_passphrase.key").getAbsolutePath()
+            "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
+            "-Dagent.binary.md5=" + expectedAgentMd5,
+            "-Dagent.launcher.md5=bar",
+            "-Dagent.tfs.md5=" + expectedTfsMd5,
+            "-Dagent.bootstrapper.version=UNKNOWN",
+            "-jar",
+            "agent.jar",
+            "-serverUrl",
+            "http://localhost:" + server.getPort() + "/go/",
+            "-sslVerificationMode",
+            "NONE",
+            "-rootCertFile",
+            new File("/path/to/cert.pem").getAbsolutePath(),
+            "-sslCertificateFile",
+            new File("/path/to/ssl_certificate.pem").getAbsolutePath(),
+            "-sslPrivateKeyFile",
+            new File("/path/to/private.key").getAbsolutePath(),
+            "-sslPrivateKeyPassphraseFile",
+            new File("/path/to/private_key_passphrase.key").getAbsolutePath()
         );
     }
 
@@ -223,7 +223,7 @@ public class AgentProcessParentImplTest {
     }
 
     @Test
-    public void shouldStartSubprocess_withOverriddenArgs() throws InterruptedException {
+    void shouldStartSubprocess_withOverriddenArgs() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         AgentProcessParentImpl bootstrapper = createBootstrapper(cmd);
         int returnCode = bootstrapper.run("launcher_version", "bar", getURLGenerator(), Map.of(AgentProcessParentImpl.ENV_GO_AGENT_STARTUP_ARGS, "foo bar  baz with%20some%20space"), context());
@@ -234,23 +234,23 @@ public class AgentProcessParentImplTest {
         assertThat(returnCode).isEqualTo(42);
         assertThat(cmd).containsExactly(
             getProperty("java.home") + FileSystems.getDefault().getSeparator() + "bin" + FileSystems.getDefault().getSeparator() + "java",
-                "foo",
-                "bar",
-                "baz",
-                "with some space",
-                "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
-                "-Dagent.binary.md5=" + expectedAgentMd5,
-                "-Dagent.launcher.md5=bar",
-                "-Dagent.tfs.md5=" + expectedTfsMd5,
-                "-Dagent.bootstrapper.version=UNKNOWN",
-                "-jar",
-                "agent.jar",
-                "-serverUrl",
-                "http://localhost:" + server.getPort() + "/go/",
-                "-sslVerificationMode",
-                "NONE",
-                "-rootCertFile",
-                new File("/path/to/cert.pem").getAbsolutePath()
+            "foo",
+            "bar",
+            "baz",
+            "with some space",
+            "-Dagent.plugins.md5=" + expectedAgentPluginsMd5,
+            "-Dagent.binary.md5=" + expectedAgentMd5,
+            "-Dagent.launcher.md5=bar",
+            "-Dagent.tfs.md5=" + expectedTfsMd5,
+            "-Dagent.bootstrapper.version=UNKNOWN",
+            "-jar",
+            "agent.jar",
+            "-serverUrl",
+            "http://localhost:" + server.getPort() + "/go/",
+            "-sslVerificationMode",
+            "NONE",
+            "-rootCertFile",
+            new File("/path/to/cert.pem").getAbsolutePath()
         );
     }
 
@@ -278,7 +278,7 @@ public class AgentProcessParentImplTest {
     }
 
     @Test
-    public void shouldLogInterruptOnAgentProcess() throws InterruptedException {
+    void shouldLogInterruptOnAgentProcess() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         try (LogFixture logFixture = logFixtureFor(AgentProcessParentImpl.class, Level.DEBUG)) {
             Process subProcess = mockProcess();
@@ -292,8 +292,9 @@ public class AgentProcessParentImplTest {
     }
 
     @Test
-    @Timeout(10) //if it fails with timeout, that means stderr was not flushed
-    public void shouldLogErrorStreamOfSubprocess() throws InterruptedException, IOException {
+    @Timeout(10)
+        //if it fails with timeout, that means stderr was not flushed
+    void shouldLogErrorStreamOfSubprocess() throws InterruptedException, IOException {
         final List<String> cmd = new ArrayList<>();
         Process subProcess = mockProcess();
         String stdErrMsg = "Mr. Agent writes to stderr!";
@@ -309,7 +310,7 @@ public class AgentProcessParentImplTest {
     }
 
     @Test
-    public void shouldLogFailureToStartSubprocess() {
+    void shouldLogFailureToStartSubprocess() {
         final List<String> cmd = new ArrayList<>();
 
         try (LogFixture logFixture = logFixtureFor(AgentProcessParentImpl.class, Level.DEBUG)) {
@@ -327,7 +328,7 @@ public class AgentProcessParentImplTest {
     }
 
     @Test
-    public void shouldClose_STDIN_and_STDOUT_ofSubprocess() throws InterruptedException {
+    void shouldClose_STDIN_and_STDOUT_ofSubprocess() throws InterruptedException {
         final List<String> cmd = new ArrayList<>();
         final OutputStream stdin = mock(OutputStream.class);
         Process subProcess = mockProcess(new ByteArrayInputStream(new byte[0]), new ByteArrayInputStream(new byte[0]), stdin);
@@ -342,7 +343,7 @@ public class AgentProcessParentImplTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldNotDownloadPluginsZipIfPresent() throws Exception {
+    void shouldNotDownloadPluginsZipIfPresent() throws Exception {
         TEST_AGENT_PLUGINS.copyTo(AGENT_PLUGINS_ZIP);
         AGENT_PLUGINS_ZIP.setLastModified(System.currentTimeMillis() - 10 * 1000);
 
@@ -354,7 +355,7 @@ public class AgentProcessParentImplTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldDownloadPluginsZipIfMissing() throws Exception {
+    void shouldDownloadPluginsZipIfMissing() throws Exception {
         File stalePluginZip = randomFile(AGENT_PLUGINS_ZIP);
         long original = stalePluginZip.length();
 
@@ -366,7 +367,7 @@ public class AgentProcessParentImplTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    public void shouldDownload_TfsImplJar_IfTheCurrentJarIsStale() throws Exception {
+    void shouldDownload_TfsImplJar_IfTheCurrentJarIsStale() throws Exception {
         File staleFile = randomFile(TFS_IMPL_JAR);
         long original = staleFile.length();
 

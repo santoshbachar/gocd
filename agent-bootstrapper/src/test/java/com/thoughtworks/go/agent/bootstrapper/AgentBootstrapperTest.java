@@ -42,25 +42,25 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 
-public class AgentBootstrapperTest {
+class AgentBootstrapperTest {
 
     private URL serverUrl;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         System.setProperty(AgentBootstrapper.WAIT_TIME_BEFORE_RELAUNCH_IN_MS, "0");
         serverUrl = URI.create("http://ghost-name:3518/go").toURL();
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         System.clearProperty(AgentBootstrapper.WAIT_TIME_BEFORE_RELAUNCH_IN_MS);
         Files.deleteIfExists(new File(Downloader.AGENT_LAUNCHER).toPath());
     }
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    public void shouldNotDieWhenCreationOfLauncherRaisesException() throws InterruptedException {
+    void shouldNotDieWhenCreationOfLauncherRaisesException() throws InterruptedException {
         final Semaphore waitForLauncherCreation = new Semaphore(1);
         waitForLauncherCreation.acquire();
         final boolean[] reLaunchWaitIsCalled = new boolean[1];
@@ -113,7 +113,7 @@ public class AgentBootstrapperTest {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    public void shouldNotRelaunchAgentLauncherWhenItReturnsAnIrrecoverableCode() {
+    void shouldNotRelaunchAgentLauncherWhenItReturnsAnIrrecoverableCode() {
         final boolean[] destroyCalled = new boolean[1];
         final AgentBootstrapper bootstrapper = new AgentBootstrapper() {
 
@@ -144,7 +144,7 @@ public class AgentBootstrapperTest {
     }
 
     @Test
-    public void shouldNotDieWhenInvocationOfLauncherRaisesException_butCreationOfLauncherWentThrough() throws InterruptedException {
+    void shouldNotDieWhenInvocationOfLauncherRaisesException_butCreationOfLauncherWentThrough() throws InterruptedException {
         final Semaphore waitForLauncherInvocation = new Semaphore(1);
         waitForLauncherInvocation.acquire();
         final AgentBootstrapper bootstrapper = new AgentBootstrapper() {
@@ -190,7 +190,7 @@ public class AgentBootstrapperTest {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.SECONDS)
-    public void shouldRetainStateAcrossLauncherInvocations() throws Exception {
+    void shouldRetainStateAcrossLauncherInvocations() throws Exception {
 
         final Map<String, String> expectedContext = new HashMap<>();
         AgentBootstrapper agentBootstrapper = new AgentBootstrapper() {

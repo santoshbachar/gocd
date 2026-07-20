@@ -39,7 +39,7 @@ import static com.thoughtworks.go.remote.StandardHeaders.*;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
-public class HttpServiceTest {
+class HttpServiceTest {
     @TempDir
     public File folderToSaveDownloadFiles;
 
@@ -48,7 +48,7 @@ public class HttpServiceTest {
     private GoAgentServerHttpClient httpClient;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         httpMethodFactory = mock(HttpService.HttpMethodFactory.class);
         httpClient = mock(GoAgentServerHttpClient.class);
         when(httpMethodFactory.httpClient()).thenReturn(httpClient);
@@ -60,7 +60,7 @@ public class HttpServiceTest {
     }
 
     @Test
-    public void shouldPostArtifactsAlongWithMD5() throws IOException, URISyntaxException {
+    void shouldPostArtifactsAlongWithMD5() throws IOException, URISyntaxException {
         File uploadingFile = mock(File.class);
         java.util.Properties checksums = new java.util.Properties();
 
@@ -86,7 +86,7 @@ public class HttpServiceTest {
     }
 
     @Test
-    public void shouldDownloadArtifact() throws IOException, URISyntaxException {
+    void shouldDownloadArtifact() throws IOException, URISyntaxException {
         String url = "http://blah";
         FetchHandler fetchHandler = mock(FetchHandler.class);
 
@@ -108,7 +108,7 @@ public class HttpServiceTest {
     }
 
     @Test
-    public void shouldNotFailIfChecksumFileIsNotPresent() throws IOException {
+    void shouldNotFailIfChecksumFileIsNotPresent() throws IOException {
         HttpService.HttpMethodFactory factory = new HttpService.HttpMethodFactory(null);
         File artifact = new File(folderToSaveDownloadFiles, "artifact");
         artifact.createNewFile();
@@ -120,7 +120,7 @@ public class HttpServiceTest {
     }
 
     @Test
-    public void shouldCreateMultipleRequestWithChecksumValues() throws IOException {
+    void shouldCreateMultipleRequestWithChecksumValues() throws IOException {
         HttpService.HttpMethodFactory factory = new HttpService.HttpMethodFactory(null);
         File artifact = new File(folderToSaveDownloadFiles, "artifact");
         artifact.createNewFile();

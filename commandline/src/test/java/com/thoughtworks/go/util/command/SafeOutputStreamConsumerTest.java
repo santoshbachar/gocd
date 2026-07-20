@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SafeOutputStreamConsumerTest {
+class SafeOutputStreamConsumerTest {
 
     @Test
-    public void shouldReplaceSecretsOnTheOutput() {
+    void shouldReplaceSecretsOnTheOutput() {
         InMemoryStreamConsumer actualConsumer = ProcessOutputStreamConsumer.inMemoryConsumer();
         SafeOutputStreamConsumer streamConsumer = new SafeOutputStreamConsumer(actualConsumer);
         streamConsumer.addArgument(commandArgumentWhichHasASecret("secret"));

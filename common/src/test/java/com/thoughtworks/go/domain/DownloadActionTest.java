@@ -33,21 +33,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
-public class DownloadActionTest {
+class DownloadActionTest {
 
     private TestingClock clock;
     private FetchHandler fetchHandler;
     private StubGoPublisher publisher;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         clock = new TestingClock();
         fetchHandler = mock(FetchHandler.class);
         publisher = new StubGoPublisher();
     }
 
     @Test
-    public void shouldRetryWhenCreatingFolderZipCache() throws Exception {
+    void shouldRetryWhenCreatingFolderZipCache() throws Exception {
         when(fetchHandler.handleResult(200, publisher)).thenReturn(true);
         MockCachingWorkDownloader httpService = new MockCachingWorkDownloader(3);
         DownloadAction downloadAction = new DownloadAction(httpService, publisher, clock);
@@ -59,7 +59,7 @@ public class DownloadActionTest {
     }
 
     @Test
-    public void shouldRetryThreeTimesWhenDownloadFails() throws Exception {
+    void shouldRetryThreeTimesWhenDownloadFails() throws Exception {
         when(fetchHandler.handleResult(200, publisher)).thenReturn(true);
         try (LogFixture logging = logFixtureFor(DownloadAction.class, Level.DEBUG)) {
             FailSometimesWorkDownloader httpService = new FailSometimesWorkDownloader(3);
@@ -79,7 +79,7 @@ public class DownloadActionTest {
     }
 
     @Test
-    public void shouldFailAfterFourthTryWhenDownloadFails() {
+    void shouldFailAfterFourthTryWhenDownloadFails() {
         try (LogFixture logging = logFixtureFor(DownloadAction.class, Level.DEBUG)) {
             FailSometimesWorkDownloader httpService = new FailSometimesWorkDownloader(99);
             try {
@@ -93,7 +93,7 @@ public class DownloadActionTest {
     }
 
     @Test
-    public void shouldReturnWithoutRetryingArtifactIsNotModified() throws Exception {
+    void shouldReturnWithoutRetryingArtifactIsNotModified() throws Exception {
         fetchHandler = new FileHandler(new File(""), getSrc());
         WorkDownloader httpService = mock(WorkDownloader.class);
         StubGoPublisher goPublisher = new StubGoPublisher();

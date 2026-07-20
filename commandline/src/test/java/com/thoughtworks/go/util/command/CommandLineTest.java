@@ -38,7 +38,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CommandLineTest {
+class CommandLineTest {
 
     private static final String DBL_QUOTE = "\"";
 
@@ -53,7 +53,7 @@ public class CommandLineTest {
     private File subFolder;
 
     @BeforeEach
-    public void setUp() throws IOException {
+    void setUp() throws IOException {
         subFolder = Files.createDirectory(temporaryFolder.resolve("subFolder")).toFile();
     }
 
@@ -63,14 +63,14 @@ public class CommandLineTest {
         assertEquals("", CommandLine.toString(null, false, separator));
 
         assertEquals(ARG_SPACES_NOQUOTES,
-                CommandLine.toString(new String[]{ARG_SPACES_NOQUOTES}, false, separator));
+            CommandLine.toString(new String[]{ARG_SPACES_NOQUOTES}, false, separator));
 
         assertEquals(ARG_SPACES_NOQUOTES + separator + ARG_NOSPACES,
-                CommandLine.toString(new String[]{ARG_SPACES_NOQUOTES, ARG_NOSPACES}, false, separator));
+            CommandLine.toString(new String[]{ARG_SPACES_NOQUOTES, ARG_NOSPACES}, false, separator));
 
         assertEquals(String.join(separator, ARG_SPACES_NOQUOTES, ARG_NOSPACES, ARG_SPACES),
-                CommandLine.toString(new String[]{ARG_SPACES_NOQUOTES, ARG_NOSPACES, ARG_SPACES},
-                        false, separator));
+            CommandLine.toString(new String[]{ARG_SPACES_NOQUOTES, ARG_NOSPACES, ARG_SPACES},
+                false, separator));
     }
 
     @Test
@@ -82,9 +82,9 @@ public class CommandLineTest {
         cl.withArg(ARG_SPACES);
 
         final String expectedWithQuotes = DBL_QUOTE + EXEC_WITH_SPACES + DBL_QUOTE
-                + " " + DBL_QUOTE + ARG_SPACES_NOQUOTES + DBL_QUOTE
-                + " " + ARG_NOSPACES
-                + " " + DBL_QUOTE + ARG_SPACES + DBL_QUOTE;
+            + " " + DBL_QUOTE + ARG_SPACES_NOQUOTES + DBL_QUOTE
+            + " " + ARG_NOSPACES
+            + " " + DBL_QUOTE + ARG_SPACES + DBL_QUOTE;
         assertEquals(expectedWithQuotes, cl.toString());
 
         assertEquals(expectedWithQuotes.replace(DBL_QUOTE, ""), cl.toStringForDisplay());
@@ -98,8 +98,8 @@ public class CommandLineTest {
         final String argWithMismatchedDblQuote = "argMisMatch='singlequoted\"WithMismatchedDblQuote'";
         cl2.withArg(argWithMismatchedDblQuote);
         assertEquals(DBL_QUOTE + EXEC_WITH_SPACES + DBL_QUOTE + " " +
-                        DBL_QUOTE + argWithMismatchedDblQuote.replace("\"", "\\\"") + DBL_QUOTE, cl2.toString(),
-                "Should escape double quotes inside the string");
+                DBL_QUOTE + argWithMismatchedDblQuote.replace("\"", "\\\"") + DBL_QUOTE, cl2.toString(),
+            "Should escape double quotes inside the string");
     }
 
     @Test
@@ -138,23 +138,23 @@ public class CommandLineTest {
         File file = Files.writeString(temporaryFolder.resolve("test.sh"), "echo $1 && exit 10", UTF_8).toFile();
 
         CommandLine line = CommandLine.createCommandLine("/bin/sh")
-                .withArg(file.getAbsolutePath())
-                .withArg(new PasswordArgument("secret"))
-                .withEncoding(UTF_8);
+            .withArg(file.getAbsolutePath())
+            .withArg(new PasswordArgument("secret"))
+            .withEncoding(UTF_8);
 
         assertThatThrownBy(() -> line.runOrBomb(null))
-                .isExactlyInstanceOf(CommandLineException.class)
-                .hasMessageContaining("EXIT CODE (10)")
-                .hasMessageNotContaining("secret");
+            .isExactlyInstanceOf(CommandLineException.class)
+            .hasMessageContaining("EXIT CODE (10)")
+            .hasMessageNotContaining("secret");
     }
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
     void shouldLogPasswordsOnOutputAsStarsUnderLinux() {
         CommandLine line = CommandLine.createCommandLine("echo")
-                .withArg("My Password is:")
-                .withArg(new PasswordArgument("secret"))
-                .withEncoding(UTF_8);
+            .withArg("My Password is:")
+            .withArg(new PasswordArgument("secret"))
+            .withEncoding(UTF_8);
         InMemoryStreamConsumer output = new InMemoryStreamConsumer();
         InMemoryStreamConsumer displayOutputStreamConsumer = InMemoryStreamConsumer.inMemoryConsumer();
         ProcessWrapper processWrapper = line.execute(output, new EnvironmentVariableContext(), null);
@@ -168,11 +168,11 @@ public class CommandLineTest {
     @EnabledOnOs(OS.WINDOWS)
     void shouldLogPasswordsOnOutputAsStarsUnderWindows() {
         CommandLine line = CommandLine.createCommandLine("cmd")
-                .withEncoding(UTF_8)
-                .withArg("/c")
-                .withArg("echo")
-                .withArg("My Password is:")
-                .withArg(new PasswordArgument("secret"));
+            .withEncoding(UTF_8)
+            .withArg("/c")
+            .withArg("echo")
+            .withArg("My Password is:")
+            .withArg(new PasswordArgument("secret"));
         InMemoryStreamConsumer output = new InMemoryStreamConsumer();
         InMemoryStreamConsumer displayOutputStreamConsumer = InMemoryStreamConsumer.inMemoryConsumer();
         ProcessWrapper processWrapper = line.execute(output, new EnvironmentVariableContext(), null);
@@ -185,9 +185,9 @@ public class CommandLineTest {
     @Test
     void shouldShowPasswordsInToStringForDisplayAsStars() {
         CommandLine line = CommandLine.createCommandLine("echo")
-                .withArg("My Password is:")
-                .withArg(new PasswordArgument("secret"))
-                .withEncoding(UTF_8);
+            .withArg("My Password is:")
+            .withArg(new PasswordArgument("secret"))
+            .withEncoding(UTF_8);
         assertThat(line.toStringForDisplay()).doesNotContain("secret");
     }
 
@@ -197,11 +197,11 @@ public class CommandLineTest {
         map.put("password1", "secret");
         map.put("password2", "secret");
         CommandLine line = CommandLine.createCommandLine("echo")
-                .withArg("My Password is:")
-                .withEnv(map)
-                .withArg(new PasswordArgument("secret"))
-                .withArg(new PasswordArgument("new-pwd"))
-                .withEncoding(UTF_8);
+            .withArg("My Password is:")
+            .withEnv(map)
+            .withArg(new PasswordArgument("secret"))
+            .withArg(new PasswordArgument("new-pwd"))
+            .withEncoding(UTF_8);
 
         line.addInput(new String[]{"my pwd is: new-pwd "});
         assertThat(line.describe()).doesNotContain("secret");
@@ -212,10 +212,10 @@ public class CommandLineTest {
     @DisabledOnOs(OS.WINDOWS)
     void shouldLogPasswordsOnEnvironmentAsStarsUnderLinux() {
         CommandLine line = CommandLine.createCommandLine("echo")
-                .withArg("My Password is:")
-                .withArg("secret")
-                .withArg(new PasswordArgument("secret"))
-                .withEncoding(UTF_8);
+            .withArg("My Password is:")
+            .withArg("secret")
+            .withArg(new PasswordArgument("secret"))
+            .withEncoding(UTF_8);
         EnvironmentVariableContext environmentVariableContext = new EnvironmentVariableContext();
         environmentVariableContext.setProperty("ENV_PASSWORD", "secret", false);
         InMemoryStreamConsumer output = new InMemoryStreamConsumer();
@@ -234,8 +234,8 @@ public class CommandLineTest {
     void shouldBeAbleToSpecifyEncoding() {
         String chrisWasHere = "?????";
         CommandLine line = CommandLine.createCommandLine("echo")
-                .withArg(chrisWasHere)
-                .withEncoding(UTF_8);
+            .withArg(chrisWasHere)
+            .withEncoding(UTF_8);
         InMemoryStreamConsumer output = new InMemoryStreamConsumer();
         ProcessWrapper processWrapper = line.execute(output, new EnvironmentVariableContext(), null);
         processWrapper.waitForExit();
@@ -277,9 +277,9 @@ public class CommandLineTest {
         createScriptInSubFolder("echo", "echo 'this should not be here'");
 
         CommandLine line = CommandLine.createCommandLine("echo")
-                .withArg("Using the REAL echo")
-                .withWorkingDir(subFolder)
-                .withEncoding(UTF_8);
+            .withArg("Using the REAL echo")
+            .withWorkingDir(subFolder)
+            .withEncoding(UTF_8);
 
         InMemoryStreamConsumer out = new InMemoryStreamConsumer();
         line.execute(out, new EnvironmentVariableContext(), null).waitForExit();
@@ -329,7 +329,7 @@ public class CommandLineTest {
     @Test
     void shouldReturnThrowExceptionWhenCommandNotExist() {
         assertThatCode(() -> CommandLine.createCommandLine("something").withEncoding(UTF_8).runOrBomb(null))
-                .isInstanceOf(Exception.class);
+            .isInstanceOf(Exception.class);
 
     }
 
@@ -347,9 +347,9 @@ public class CommandLineTest {
     @Test
     void shouldPrefixStderrOutput() {
         CommandLine line = CommandLine.createCommandLine("git")
-                .withArg("clone")
-                .withArg("https://foo/bar")
-                .withEncoding(UTF_8);
+            .withArg("clone")
+            .withArg("https://foo/bar")
+            .withEncoding(UTF_8);
         InMemoryStreamConsumer output = new InMemoryStreamConsumer();
         ProcessWrapper processWrapper = line.execute(output, new EnvironmentVariableContext(), null);
         processWrapper.waitForExit();

@@ -23,26 +23,26 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class URLServiceTest {
+class URLServiceTest {
     private static final String BASE_URL = "http://localhost:9090/go";
 
     private URLService urlService;
     private JobIdentifier jobIdentifier;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         new SystemEnvironment().set(SystemEnvironment.SERVICE_URL, BASE_URL + "/");
         urlService = new URLService();
         jobIdentifier = new JobIdentifier("pipelineName", -2, "LATEST", "stageName", "LATEST", "buildName", 123L);
     }
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         new SystemEnvironment().clearProperty(SystemEnvironment.SERVICE_URL.propertyName());
     }
 
     @Test
-    public void shouldReturnProperRestfulUrlOfArtifact() {
+    void shouldReturnProperRestfulUrlOfArtifact() {
         String downloadUrl1 = urlService.getUploadUrlOfAgent(jobIdentifier, "file");
         String downloadUrl2 = urlService.getUploadUrlOfAgent(jobIdentifier, "/file");
         assertThat(downloadUrl1).endsWith("/files/pipelineName/LATEST/stageName/LATEST/buildName/file?attempt=1&buildId=123");
@@ -50,13 +50,13 @@ public class URLServiceTest {
     }
 
     @Test
-    public void shouldReturnRestfulUrlOfAgentWithAttemptCounter() {
+    void shouldReturnRestfulUrlOfAgentWithAttemptCounter() {
         String uploadUrl1 = urlService.getUploadUrlOfAgent(jobIdentifier, "file", 1);
         assertThat(uploadUrl1).endsWith("/files/pipelineName/LATEST/stageName/LATEST/buildName/file?attempt=1&buildId=123");
     }
 
     @Test
-    public void shouldReturnServerUrlWithSubpath() {
+    void shouldReturnServerUrlWithSubpath() {
         assertThat(urlService.serverUrlFor("someSubPath/xyz")).isEqualTo(BASE_URL + "/someSubPath/xyz");
     }
 

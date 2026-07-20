@@ -25,12 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
-public class ApplicationContextTest {
+class ApplicationContextTest {
     @Autowired
     AgentController controller;
 
     @Test
-    public void shouldLoadApplicationContext() {
+    void shouldLoadApplicationContext() {
         assertThat(controller).isNotNull();
     }
 

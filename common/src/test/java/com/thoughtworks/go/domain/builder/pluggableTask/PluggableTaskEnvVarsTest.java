@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class PluggableTaskEnvVarsTest {
+class PluggableTaskEnvVarsTest {
 
     private PluggableTaskEnvVars envVars;
 
@@ -37,7 +37,7 @@ public class PluggableTaskEnvVarsTest {
     );
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         EnvironmentVariableContext context = new EnvironmentVariableContext();
         props.forEach((key, value) -> context.setProperty(key, value, keyShouldBeSecure(key)));
 
@@ -49,12 +49,12 @@ public class PluggableTaskEnvVarsTest {
     }
 
     @Test
-    public void shouldReturnEnvVarsMap() {
+    void shouldReturnEnvVarsMap() {
         assertThat(envVars.asMap()).containsExactlyInAnyOrderEntriesOf(props);
     }
 
     @Test
-    public void testSecureEnvSpecifier() {
+    void testSecureEnvSpecifier() {
         Console.SecureEnvVarSpecifier secureEnvVarSpecifier = envVars.secureEnvSpecifier();
         for (String key : props.keySet()) {
             assertThat(secureEnvVarSpecifier.isSecure(key)).isEqualTo(keyShouldBeSecure(key));
@@ -62,7 +62,7 @@ public class PluggableTaskEnvVarsTest {
     }
 
     @Test
-    public void shouldPrintToConsole() {
+    void shouldPrintToConsole() {
         Console console = mock(Console.class);
         envVars.writeTo(console);
         verify(console).printEnvironment(envVars.asMap(), envVars.secureEnvSpecifier());

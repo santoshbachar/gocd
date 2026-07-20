@@ -24,17 +24,17 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FileValidatorTest {
+class FileValidatorTest {
     private String realConfigDir;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         realConfigDir = new SystemEnvironment().getPropertyImpl("cruise.config.dir");
         new SystemEnvironment().setProperty("cruise.config.dir", new SystemEnvironment().getPropertyImpl("java.io.tmpdir"));
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         if (realConfigDir != null) {
             new SystemEnvironment().setProperty("cruise.config.dir", realConfigDir);
         } else {
@@ -43,7 +43,7 @@ public class FileValidatorTest {
     }
 
     @Test
-    public void shouldSetValidationToFalseIfFileDoesNotExistInClasspath() {
+    void shouldSetValidationToFalseIfFileDoesNotExistInClasspath() {
         FileValidator fv = FileValidator.configFileAlwaysOverwrite("does.not.exist", new SystemEnvironment());
         Validation val = new Validation();
         fv.validate(val);

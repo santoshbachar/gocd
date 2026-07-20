@@ -49,7 +49,7 @@ class GoAgentServerHttpClientBuilderTest {
     public FakeGoServer server;
 
     @Test
-    public void shouldMakeNormalHttpRequest() throws Exception {
+    void shouldMakeNormalHttpRequest() throws Exception {
         GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null);
         try (CloseableHttpResponse response = requestFor(builder, generatorFor("localhost", server.getPort()))) {
             assertThat(response.getStatusLine().getStatusCode()).isEqualTo(200);
@@ -57,7 +57,7 @@ class GoAgentServerHttpClientBuilderTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfTheServerIsDown() {
+    void shouldThrowExceptionIfTheServerIsDown() {
         GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null);
         assertThatThrownBy(() -> requestFor(builder, generatorFor("badhost", server.getPort())))
             .isExactlyInstanceOf(UnknownHostException.class);
@@ -66,27 +66,27 @@ class GoAgentServerHttpClientBuilderTest {
     @Nested
     class ServerCertVerification {
         @Test
-        public void shouldConnectToAnSslServerWithSelfSignedCertIfNotVerifying() throws Exception {
+        void shouldConnectToAnSslServerWithSelfSignedCertIfNotVerifying() throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null);
             assertSuccessfulHttpsRequestFor(builder);
         }
 
         @ParameterizedTest
         @EnumSource(value = SslVerificationMode.class, names = {"NO_VERIFY_HOST", "FULL"})
-        public void shouldConnectToAnSslServerWithSelfSignedCertWhenInsecureModeIsNoVerifyHost(SslVerificationMode mode) throws Exception {
+        void shouldConnectToAnSslServerWithSelfSignedCertWhenInsecureModeIsNoVerifyHost(SslVerificationMode mode) throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(resourceToTempFile("/testdata/root-ca-ec.crt"), mode, null, null, null);
             assertSuccessfulHttpsRequestFor(builder);
         }
 
         @ParameterizedTest
         @EnumSource(value = SslVerificationMode.class, names = {"NONE", "NO_VERIFY_HOST"})
-        public void shouldConnectToAnSslServerWithMismatchedHostNameIfNotVerifyingHostname(SslVerificationMode mode) throws Exception {
+        void shouldConnectToAnSslServerWithMismatchedHostNameIfNotVerifyingHostname(SslVerificationMode mode) throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(resourceToTempFile("/testdata/root-ca-ec.crt"), mode, null, null, null);
             assertSuccessfulHttpsRequestFor(builder, generatorFor("https://127.0.0.1:" + server.getSecurePort() + "/go/"));
         }
 
         @Test
-        public void shouldRaiseExceptionWhenSelfSignedCertDoesNotMatchTheHostName() throws Exception {
+        void shouldRaiseExceptionWhenSelfSignedCertDoesNotMatchTheHostName() throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(resourceToTempFile("/testdata/root-ca-ec.crt"), SslVerificationMode.FULL, null, null, null);
             assertThatThrownBy(() -> requestFor(builder, generatorFor("https://127.0.0.1:" + server.getSecurePort() + "/go/")))
                 .isInstanceOf(IOException.class)
@@ -99,7 +99,7 @@ class GoAgentServerHttpClientBuilderTest {
     class AgentCertMtlsVerification {
         @ParameterizedTest
         @CsvSource({"ec, pk1", "ec, pk8", "rsa, pk1", "rsa, pk8"})
-        public void shouldBeAbleToConnectWithAgentCertConfiguresEvenIfOptionalOnServer(String keyType, String keyFormat) throws Exception {
+        void shouldBeAbleToConnectWithAgentCertConfiguresEvenIfOptionalOnServer(String keyType, String keyFormat) throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(resourceToTempFile("/testdata/root-ca-ec.crt"), SslVerificationMode.FULL, resourceToTempFile(String.format("/testdata/agent-client-cert-%s.crt", keyType)), resourceToTempFile(String.format("/testdata/agent-client-cert-%s-key.%s", keyType, keyFormat)), resourceToTempFile("/testdata/agent-client-cert.pass"));
             // Connect via the normal TLS port where MTLS is optional
             assertSuccessfulHttpsRequestFor(builder);
@@ -107,13 +107,13 @@ class GoAgentServerHttpClientBuilderTest {
 
         @ParameterizedTest
         @CsvSource({"ec, pk1", "ec, pk8", "rsa, pk1", "rsa, pk8"})
-        public void shouldBeAbleToConnectWithAgentCertOnMtlsPort(String keyType, String keyFormat) throws Exception {
+        void shouldBeAbleToConnectWithAgentCertOnMtlsPort(String keyType, String keyFormat) throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(resourceToTempFile("/testdata/root-ca-ec.crt"), SslVerificationMode.FULL, resourceToTempFile(String.format("/testdata/agent-client-cert-%s.crt", keyType)), resourceToTempFile(String.format("/testdata/agent-client-cert-%s-key.%s", keyType, keyFormat)), resourceToTempFile("/testdata/agent-client-cert.pass"));
             assertSuccessfulHttpsRequestFor(builder, mtlsUrlGenerator());
         }
 
         @Test
-        public void shouldRaiseExceptionWhenNoAgentCertPresentedOnMtlsPort() throws Exception {
+        void shouldRaiseExceptionWhenNoAgentCertPresentedOnMtlsPort() throws Exception {
             GoAgentServerHttpClientBuilder builder = new GoAgentServerHttpClientBuilder(resourceToTempFile("/testdata/root-ca-ec.crt"), SslVerificationMode.FULL, null, null, null);
             assertThatThrownBy(() -> requestFor(builder, mtlsUrlGenerator()))
                 .satisfiesAnyOf(

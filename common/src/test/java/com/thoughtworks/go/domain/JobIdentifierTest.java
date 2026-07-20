@@ -20,39 +20,39 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JobIdentifierTest {
+class JobIdentifierTest {
     @Test
-    public void shouldReturnBuildLocator() {
+    void shouldReturnBuildLocator() {
         JobIdentifier id = new JobIdentifier("cruise", 1, "label-", "dev", "1", "linux-firefox-1", 100L);
         assertThat(id.buildLocator()).isEqualTo("cruise/1/dev/1/linux-firefox-1");
     }
 
     @Test
-    public void shouldReturnArtifactLocatorUsingLabel() {
+    void shouldReturnArtifactLocatorUsingLabel() {
         JobIdentifier id = new JobIdentifier("cruise", -2, "1.0.1234", "dev", "1", "linux-firefox-1", 100L);
         assertThat(id.artifactLocator("consoleoutput/log.xml")).isEqualTo("cruise/1.0.1234/dev/1/linux-firefox-1/consoleoutput/log.xml");
     }
 
     @Test
-    public void shouldReturnArtifactLocatorUsingPipelineCounter() {
+    void shouldReturnArtifactLocatorUsingPipelineCounter() {
         JobIdentifier id = new JobIdentifier("cruise", 1234, "1.0.1234", "dev", "1", "linux-firefox-1", 100L);
         assertThat(id.artifactLocator("consoleoutput/log.xml")).isEqualTo("cruise/1234/dev/1/linux-firefox-1/consoleoutput/log.xml");
     }
 
     @Test
-    public void shouldFixFilePathWithPrecedingSlash() {
+    void shouldFixFilePathWithPrecedingSlash() {
         JobIdentifier id = new JobIdentifier("cruise", 1234, "1.0.1234", "dev", "1", "linux-firefox-1", 100L);
         assertThat(id.artifactLocator("/consoleoutput/log.xml")).isEqualTo("cruise/1234/dev/1/linux-firefox-1/consoleoutput/log.xml");
     }
 
     @Test
-    public void shouldReturnURN() {
+    void shouldReturnURN() {
         JobIdentifier id = new JobIdentifier("cruise", 1, "label-", "dev", "1", "linux-firefox-1", 100L);
         assertThat(id.asURN()).isEqualTo("urn:x-go.studios.thoughtworks.com:job-id:cruise:1:dev:1:linux-firefox-1");
     }
 
     @Test
-    public void shouldPopulateGoJobInstanceRelatedEnvironmentVariables() {
+    void shouldPopulateGoJobInstanceRelatedEnvironmentVariables() {
         JobIdentifier id = new JobIdentifier("pipeline-name", 10, "label-10", "stage-name", "2", "build-name");
         id.setRerunOfCounter(1);
 
@@ -73,7 +73,7 @@ public class JobIdentifierTest {
     }
 
     @Test
-    public void shouldNotPopulate_RerunOfStage_whenNotAvailable() {
+    void shouldNotPopulate_RerunOfStage_whenNotAvailable() {
         JobIdentifier id = new JobIdentifier("pipeline-name", 10, "label-10", "stage-name", "2", "build-name");
         EnvironmentVariableContext context = new EnvironmentVariableContext();
         id.populateEnvironmentVariables(context);

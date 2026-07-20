@@ -23,7 +23,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import static com.thoughtworks.go.apiv1.webhook.request.payload.pr.PrPayload.State.OPEN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GitLabPRTest {
+class GitLabPRTest {
     @ParameterizedTest
     @FileSource(files = "/gitlab-pr.json")
     void deserializes(String json) {

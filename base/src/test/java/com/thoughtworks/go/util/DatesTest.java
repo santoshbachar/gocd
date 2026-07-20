@@ -22,9 +22,9 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DatesTest {
+class DatesTest {
     @Test
-    public void shouldBeAbleToParseRfc3339OrIso8601Dates() {
+    void shouldBeAbleToParseRfc3339OrIso8601Dates() {
         assertThat(Dates.parseIso8601StrictOffset("2008-09-09T10:56:14.345Z"))
             .isEqualTo(Date.from(ZonedDateTime.parse("2008-09-09T18:56:14.345+08:00").toInstant()));
         assertThat(Dates.parseIso8601StrictOffset("2008-09-09T10:56:14Z"))
@@ -37,13 +37,13 @@ public class DatesTest {
     }
 
     @Test
-    public void shouldSerializeDateForCcTray() {
+    void shouldSerializeDateForCcTray() {
         Date date = Date.from(ZonedDateTime.parse("2008-12-09T18:56:14+08:00").toInstant());
         assertThat(Dates.formatIso8601ForCCTray(date)).isEqualTo("2008-12-09T10:56:14Z");
     }
 
     @Test
-    public void shouldForDatesToIsoUtcNoMillis() {
+    void shouldForDatesToIsoUtcNoMillis() {
         assertThat(Dates.formatIso8601UtcNoMillis(Date.from(ZonedDateTime.parse("2008-12-09T18:56:14+08:00").toInstant())))
             .isEqualTo("2008-12-09T10:56:14Z");
         assertThat(Dates.formatIso8601UtcNoMillis(Date.from(ZonedDateTime.parse("2008-12-09T18:56:14.456+08:00").toInstant())))
@@ -53,7 +53,7 @@ public class DatesTest {
     }
 
     @Test
-    public void shouldParseIsoDatesWithStrictOffset() {
+    void shouldParseIsoDatesWithStrictOffset() {
         assertThat(Dates.parseIso8601StrictOffset("2013-03-21T13:43:57Z"))
             .isEqualTo("2013-03-21T13:43:57Z");
         assertThat(Dates.parseIso8601StrictOffset("2013-03-21T13:43:57+05:30"))
@@ -63,7 +63,7 @@ public class DatesTest {
     }
 
     @Test
-    public void shouldFormatSimpleDisplayDatesLocaleAware() {
+    void shouldFormatSimpleDisplayDatesLocaleAware() {
         assertThat(Dates.formatToSimpleDate(Date.from(ZonedDateTime.parse("2008-09-09T18:56:14+08:00").toInstant())))
             .isEqualTo("09 Sep 2008");
     }

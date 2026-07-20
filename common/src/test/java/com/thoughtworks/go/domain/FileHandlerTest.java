@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
-public class FileHandlerTest {
+class FileHandlerTest {
 
     @TempDir
     File tempDir;
@@ -43,7 +43,7 @@ public class FileHandlerTest {
     private StubGoPublisher goPublisher;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         artifact = new File("foo");
         checksums = mock(ArtifactMd5Checksums.class);
         fileHandler = new FileHandler(artifact, "src/file/path");
@@ -51,12 +51,12 @@ public class FileHandlerTest {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         Files.deleteIfExists(artifact.toPath());
     }
 
     @Test
-    public void shouldCheckTheMD5OfTheFile() throws IOException {
+    void shouldCheckTheMD5OfTheFile() throws IOException {
         when(checksums.md5For("src/file/path")).thenReturn(DigestUtils.md5Hex(new ByteArrayInputStream("Hello world".getBytes())));
         fileHandler.useArtifactMd5Checksums(checksums);
 
@@ -70,7 +70,7 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void shouldWarnWhenChecksumsFileIsNotPresent() throws IOException {
+    void shouldWarnWhenChecksumsFileIsNotPresent() throws IOException {
         fileHandler.handle(new ByteArrayInputStream("Hello world".getBytes()));
 
         fileHandler.handleResult(200, goPublisher);
@@ -81,7 +81,7 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void shouldWarnWhenChecksumsFileIsPresentButMD5DoesNotExist() throws IOException {
+    void shouldWarnWhenChecksumsFileIsPresentButMD5DoesNotExist() throws IOException {
         when(checksums.md5For("src/file/path")).thenReturn(null);
         fileHandler.useArtifactMd5Checksums(checksums);
 
@@ -95,7 +95,7 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenChecksumsDoNotMatch() throws IOException {
+    void shouldThrowExceptionWhenChecksumsDoNotMatch() throws IOException {
         when(checksums.md5For("src/file/path")).thenReturn("wrong_md5");
         fileHandler.useArtifactMd5Checksums(checksums);
 
@@ -110,7 +110,7 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void shouldNotDisplayArtifactMultipleTimesWhenRetriesCalled() throws IOException {
+    void shouldNotDisplayArtifactMultipleTimesWhenRetriesCalled() throws IOException {
         when(checksums.md5For("src/file/path")).thenReturn("wrong_md5");
         fileHandler.useArtifactMd5Checksums(checksums);
 

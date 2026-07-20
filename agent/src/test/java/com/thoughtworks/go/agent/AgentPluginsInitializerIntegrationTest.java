@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 
 /* Some parts are mocked, as in AgentPluginsInitializerTest, but the file system (through ZipUtil) is not. */
 @ExtendWith(MockitoExtension.class)
-public class AgentPluginsInitializerIntegrationTest {
+class AgentPluginsInitializerIntegrationTest {
     @TempDir
     Path tempDir;
     @Mock

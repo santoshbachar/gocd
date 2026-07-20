@@ -47,19 +47,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(FakeGoServerExtension.class)
-public class ServerBinaryDownloaderTest {
+class ServerBinaryDownloaderTest {
 
     @GoTestResource
     public FakeGoServer server;
 
     @AfterEach
-    public void tearDown() throws IOException {
+    void tearDown() throws IOException {
         Files.deleteIfExists(new File(Downloader.AGENT_BINARY).toPath());
         Files.deleteIfExists(DownloadableFile.AGENT.getLocalFile().toPath());
     }
 
     @Test
-    public void shouldSetMd5AndSSLPortHeaders() throws Exception {
+    void shouldSetMd5AndSSLPortHeaders() throws Exception {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE.name(), null, null, null), ServerUrlGeneratorMother.generatorFor("localhost", server.getPort()));
         downloader.downloadIfNecessary(DownloadableFile.AGENT);
 
@@ -71,7 +71,7 @@ public class ServerBinaryDownloaderTest {
     }
 
     @Test
-    public void shouldGetExtraPropertiesFromHeader() {
+    void shouldGetExtraPropertiesFromHeader() {
         assertExtraProperties("", new HashMap<>());
 
         assertExtraProperties("Key1=Value1 key2=value2",
@@ -85,12 +85,12 @@ public class ServerBinaryDownloaderTest {
     }
 
     @Test
-    public void shouldNotFailIfExtraPropertiesAreNotFormattedProperly() {
+    void shouldNotFailIfExtraPropertiesAreNotFormattedProperly() {
         assertExtraProperties("abc", new HashMap<>());
     }
 
     @Test
-    public void shouldDownloadAgentJarFile() {
+    void shouldDownloadAgentJarFile() {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null), ServerUrlGeneratorMother.generatorFor("localhost", server.getPort()));
         assertThat(DownloadableFile.AGENT.doesNotExist()).isEqualTo(true);
         downloader.downloadIfNecessary(DownloadableFile.AGENT);
@@ -98,44 +98,44 @@ public class ServerBinaryDownloaderTest {
     }
 
     @Test
-    public void shouldReturnTrueIfTheFileIsDownloaded() {
+    void shouldReturnTrueIfTheFileIsDownloaded() {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null), ServerUrlGeneratorMother.generatorFor("localhost", server.getPort()));
         assertThat(downloader.downloadIfNecessary(DownloadableFile.AGENT)).isEqualTo(true);
     }
 
     @Test
-    public void shouldThrowExceptionIfTheServerIsDown() {
+    void shouldThrowExceptionIfTheServerIsDown() {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null), ServerUrlGeneratorMother.generatorFor("locahost", server.getPort()));
         assertThatThrownBy(() -> downloader.download(DownloadableFile.AGENT))
-                .isExactlyInstanceOf(UnknownHostException.class);
+            .isExactlyInstanceOf(UnknownHostException.class);
     }
 
     @Test
-    public void shouldFailIfMD5HeadersAreMissing() {
+    void shouldFailIfMD5HeadersAreMissing() {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null), ServerUrlGeneratorMother.generatorWithoutSubPathFor("https://localhost:" + server.getSecurePort() + "/go/hello"));
         assertThatThrownBy(() -> downloader.fetchUpdateCheckHeaders(DownloadableFile.AGENT))
-                .isInstanceOf(IOException.class)
-                .hasMessageContaining("Missing required headers 'Content-MD5' in response.");
+            .isInstanceOf(IOException.class)
+            .hasMessageContaining("Missing required headers 'Content-MD5' in response.");
     }
 
     @Test
-    public void shouldFailIfServerIsNotAvailable() {
+    void shouldFailIfServerIsNotAvailable() {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null), ServerUrlGeneratorMother.generatorWithoutSubPathFor("https://invalidserver:" + server.getSecurePort() + "/go"));
         assertThatThrownBy(() -> downloader.fetchUpdateCheckHeaders(DownloadableFile.AGENT))
-                .isExactlyInstanceOf(UnknownHostException.class)
-                .hasMessageContaining("invalidserver");
+            .isExactlyInstanceOf(UnknownHostException.class)
+            .hasMessageContaining("invalidserver");
     }
 
     @Test
-    public void shouldThrowExceptionInCaseOf404() {
+    void shouldThrowExceptionInCaseOf404() {
         ServerBinaryDownloader downloader = new ServerBinaryDownloader(new GoAgentServerHttpClientBuilder(null, SslVerificationMode.NONE, null, null, null), ServerUrlGeneratorMother.generatorWithoutSubPathFor("https://localhost:" + server.getSecurePort() + "/go/not-found"));
         assertThatThrownBy(() -> downloader.download(DownloadableFile.AGENT))
-                .isInstanceOf(IOException.class)
-                .hasMessageContaining("This agent might be incompatible with your GoCD Server. Please fix the version mismatch between GoCD Server and GoCD Agent.");
+            .isInstanceOf(IOException.class)
+            .hasMessageContaining("This agent might be incompatible with your GoCD Server. Please fix the version mismatch between GoCD Server and GoCD Agent.");
     }
 
     @Test
-    public void shouldReturnFalseIfTheServerDoesNotRespondWithEntity() throws Exception {
+    void shouldReturnFalseIfTheServerDoesNotRespondWithEntity() throws Exception {
         GoAgentServerHttpClientBuilder builder = mock(GoAgentServerHttpClientBuilder.class);
         CloseableHttpClient closeableHttpClient = mock(CloseableHttpClient.class);
         when(builder.build()).thenReturn(closeableHttpClient);

@@ -19,21 +19,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StringArgumentTest {
+class StringArgumentTest {
     private final StringArgument argument = new StringArgument("test");
 
     @Test
-    public void shouldReturnStringValueForCommandLine() {
+    void shouldReturnStringValueForCommandLine() {
         assertThat(argument.originalArgument()).isEqualTo("test");
     }
 
     @Test
-    public void shouldReturnStringValueForReporting() {
+    void shouldReturnStringValueForReporting() {
         assertThat(argument.forDisplay()).isEqualTo("test");
     }
 
     @Test
-    public void shouldReturnValueForToString() {
+    void shouldReturnValueForToString() {
         assertThat(argument.toString()).isEqualTo("test");
     }
 }

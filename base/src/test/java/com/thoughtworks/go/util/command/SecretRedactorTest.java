@@ -25,19 +25,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SecretRedactorTest {
 
     @Test
-    public void shouldUseNewRedactableAndConvertWhenNecessary() {
+    void shouldUseNewRedactableAndConvertWhenNecessary() {
         SecretRedactor redacting = line -> line.next("xxx");
         assertThat(redacting.redactFrom("")).isEqualTo("xxx");
     }
 
     @Test
-    public void shouldUseNewRedactableWhenNecessary() {
+    void shouldUseNewRedactableWhenNecessary() {
         SecretRedactor redacting = line -> line.next("xxx");
         assertThat(redacting.redactFromRepeatably("").value()).isEqualTo("xxx");
     }
 
     @Test
-    public void shouldNotHaveNullToString() {
+    void shouldNotHaveNullToString() {
         SecretRedactor.Redactable redactable = SecretRedactor.Redactable.of(null);
         assertThat(redactable.wasRedacted()).isFalse();
         assertThat(redactable.value()).isEqualTo(null);
@@ -45,14 +45,14 @@ class SecretRedactorTest {
     }
 
     @Test
-    public void shouldRetainOriginalWhenNoSecret() {
+    void shouldRetainOriginalWhenNoSecret() {
         SecretRedactor.Redactable redactable = SecretRedactor.Redactable.of("hello world");
         assertThat(redactable.value()).isEqualTo("hello world");
         assertThat(redactable.next("hello world")).isSameAs(redactable);
     }
 
     @Test
-    public void shouldSetFlagWhenAltered() {
+    void shouldSetFlagWhenAltered() {
         SecretRedactor.Redactable redactable = SecretRedactor.Redactable.of("hello world");
         assertThat(redactable.wasRedacted()).isFalse();
         assertThat(SecretRedactor.Redactable.of("hello world").next("hello world2")).satisfies(r -> {
@@ -62,7 +62,7 @@ class SecretRedactorTest {
     }
 
     @Test
-    public void shouldRedactFromLists() {
+    void shouldRedactFromLists() {
         assertThat(SecretRedactor.redact("hello world",
             List.of(r -> r.next(r.value() + " a1"), r -> r.next(r.value() + " a2")),
             List.of(r -> r.next(r.value() + " b1"), r -> r.next(r.value() + " b2"))
