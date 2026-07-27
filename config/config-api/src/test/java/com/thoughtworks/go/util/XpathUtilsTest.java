@@ -15,19 +15,29 @@
  */
 package com.thoughtworks.go.util;
 
+import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XpathUtilsTest {
     @TempDir
@@ -35,12 +45,12 @@ public class XpathUtilsTest {
 
     private File testFile;
     private static final String XML = """
-            <root>
-            <son>
-            <grandson name="someone"/>
-            <grandson name="anyone" address=""></grandson>
-            </son>
-            </root>""";
+        <root>
+        <son>
+        <grandson name="someone"/>
+        <grandson name="anyone" address=""></grandson>
+        </son>
+        </root>""";
 
     @AfterEach
     public void tearDown() {
@@ -96,7 +106,7 @@ public class XpathUtilsTest {
     }
 
     @Test
-    void shouldRejectXmlContainingDocTypeDeclarationToPreventXXE() throws Exception {
+    void shouldRejectXmlContainingDocTypeDeclarationWithEntityReferenceToPreventXXE() throws Exception {
         String maliciousXml = """
             <?xml version="1.0"?>
             <!DOCTYPE root [
@@ -110,7 +120,242 @@ public class XpathUtilsTest {
 
         File file = getTestFile(maliciousXml);
 
-        assertThrows(XPathExpressionException.class, () -> XpathUtils.evaluate(file, "/root/son/grandson/@name"));
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("The external entity reference ")
+            .hasMessageContaining("is not permitted in an attribute value.");
+    }
+
+    @Test
+    void shouldRejectXmlWithEntityReferenceButMissingDocTypeDeclaration() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <root>
+            <son>
+            <grandson name="&xxe;"/>
+            </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("The entity ")
+            .hasMessageContaining(" was referenced, but not declared.");
+    }
+
+    @Test
+    void shouldNotRejectXmlContainingDocTypeDeclarationButMissingEntityReference() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "file:///etc/passwd">
+            ]>
+            <root>
+            <son>
+            <grandson name="Spiderman"/>
+            </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertDoesNotThrow(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"));
+    }
+
+    @Test
+    void shouldNotReject() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <root>
+            <son>
+            <grandson>no-xxe</grandson>
+            </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertDoesNotThrow(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"));
+    }
+
+    @Test
+    void shouldRejectNetworkCallingByDomainName() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "https://www.google.com/">
+            ]>
+            <root>
+                <son>
+                    <grandson name="">&xxe;</grandson>
+                </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("External Entity: Failed to read external document '', because ")
+            .hasMessageContaining(" access is not allowed due to restriction set by the accessExternalDTD property.");
+    }
+
+    @Test
+    void shouldRejectNetworkCallingIfURLHasNoScheme() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "localhost:8000">
+            ]>
+            <root>
+                <son>
+                    <grandson name="name">&xxe;</grandson>
+                </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(MalformedURLException.class)
+            .hasMessageContaining("java.net.MalformedURLException: unknown protocol: localhost");
+    }
+
+    @Test
+    void shouldRejectNetworkCallingIfURLHasUnicodeCharacters() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "🙂localhost:8000">
+            ]>
+            <root>
+                <son>
+                    <grandson name="name">&xxe;</grandson>
+                </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("An invalid XML character (")
+            .hasMessageContaining(") was found in the system identifier.");
+    }
+
+    @Test
+    void shouldRejectNetworkCallingByLocalHostWithScheme() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "http://localhost:8000">
+            ]>
+            <root>
+                <son>
+                    <grandson name="name">&xxe;</grandson>
+                </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("not allowed due to restriction set by the accessExternalDTD property");
+    }
+
+    @Test
+    void shouldRejectNetworkCallingByIPAddress() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "https://8.8.8.8">
+            ]>
+            <root>
+                <son>
+                    <grandson name="name">&xxe;</grandson>
+                </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("External Entity: Failed to read external document '")
+            .hasMessageContaining("', because '")
+            .hasMessageContaining("access is not allowed due to restriction set by the accessExternalDTD property.");
+    }
+
+    @Test
+    void shouldRejectNetworkCallingByIPAddressWithNoScheme() throws Exception {
+        String maliciousXml = """
+            <?xml version="1.0"?>
+            <!DOCTYPE root [
+              <!ENTITY xxe SYSTEM "8.8.8.8">
+            ]>
+            <root>
+                <son>
+                    <grandson name="name">&xxe;</grandson>
+                </son>
+            </root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root/son/grandson/@name"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("External Entity: Failed to read external document '")
+            .hasMessageContaining("', because 'file'")
+            .hasMessageContaining(" access is not allowed due to restriction set by the accessExternalDTD property.");
+    }
+
+    @Test
+    void shouldRejectEntityExpansion() throws Exception {
+        String maliciousXml = """
+            <!DOCTYPE root [
+              <!ENTITY a0 "aaaaaaaaaaaaaaaaaaaa">
+              <!ENTITY a1 "&a0;&a0;&a0;&a0;&a0;&a0;&a0;&a0;&a0;&a0;">
+              <!ENTITY a2 "&a1;&a1;&a1;&a1;&a1;&a1;&a1;&a1;&a1;&a1;">
+              <!ENTITY a3 "&a2;&a2;&a2;&a2;&a2;&a2;&a2;&a2;&a2;&a2;">
+              <!ENTITY a4 "&a3;&a3;&a3;&a3;&a3;&a3;&a3;&a3;&a3;&a3;">
+              <!ENTITY a5 "&a4;&a4;&a4;&a4;&a4;&a4;&a4;&a4;&a4;&a4;">
+              <!ENTITY a6 "&a5;&a5;&a5;&a5;&a5;&a5;&a5;&a5;&a5;&a5;">
+              <!ENTITY a7 "&a6;&a6;&a6;&a6;&a6;&a6;&a6;&a6;&a6;&a6;">
+              <!ENTITY a8 "&a7;&a7;&a7;&a7;&a7;&a7;&a7;&a7;&a7;&a7;">
+              <!ENTITY a9 "&a8;&a8;&a8;&a8;&a8;&a8;&a8;&a8;&a8;&a8;">
+            ]>
+            <root>&a9;</root>""";
+
+        File file = getTestFile(maliciousXml);
+
+        assertThatThrownBy(() -> XpathUtils.evaluate(file, "/root"))
+            .isExactlyInstanceOf(XPathExpressionException.class)
+            .hasCauseExactlyInstanceOf(SAXParseException.class)
+            .hasMessageContaining("JAXP00010001: The parser has encountered more than \"")
+            .hasMessageContaining("\" entity expansions in this document; this is the limit imposed by \"jdk.xml.entityExpansionLimit\".");
+    }
+
+    @Test
+    void shouldNotProcessXIncludeByDefault() throws Exception {
+        Path secret = Files.createTempFile("secret", ".txt");
+        Files.writeString(secret, "Gangadhar is Shaktimaan");
+
+        String maliciousXml = """
+            <?xml version="1.0"?>
+               <root xmlns:xi="http://www.w3.org/2001/XInclude">
+                 <son>
+                   <grandson>
+                     <xi:include href="%s" parse="text"/>
+                   </grandson>
+                 </son>
+               </root>""".formatted(secret.toUri());
+
+        File file = getTestFile(maliciousXml);
+
+        String result = XpathUtils.evaluate(file, "/root/son/grandson");
+        assertThat(result).isEmpty();
     }
 
     @Test
